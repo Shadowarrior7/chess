@@ -56,8 +56,61 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return new ArrayList<>();
+        PieceType pieceType = type;
+        //return new ArrayList<>();
+        if (pieceType == PieceType.KING) {
+            Collection<ChessMove> moves = new ArrayList<>();
+            int[][] king_moves = {{1,0},{-1,0},{0,1},{0,-1},{-1,1},{1,1},{-1,-1},{1,-1}};
+        }
+        else if (pieceType == PieceType.QUEEN) {
+            int[][] queen_moves = {{1,0},{-1,0},{0,1},{0,-1},{-1,1},{1,1},{-1,-1},{1,-1}};
+        }
+        else if (pieceType == PieceType.BISHOP) {
+            int[][] bishop_moves = {{1,1},{-1,1},{1,-1},{-1,-1}};
+        }
+        else if (pieceType == PieceType.KNIGHT) {
+            int[][] knight_moves = {{2,1},{2,-1},{1,-2},{1,2},{-1,-2},{-2,-1},{-1,2},{-2,1}};
+        }
+        else if (pieceType == PieceType.ROOK) {
+            int[][] rook_moves = {{1,0},{-1,0},{0,1},{0,-1}};
+        }
+        else if (pieceType == PieceType.PAWN) {
+            //white move, black move, white right, white left, black right, black left
+            int[][] pawn_moves = {{1,0},{0,1},{1,1},{1,-1},{-1,-1},{-1,1}};
+        }
         //throw new RuntimeException("Not implemented");
+    }
+
+    public Collection<ArrayList<ChessMove>> check_for_moves(int[][] possibilities, ChessBoard board, ChessPosition myPosition, Boolean iterative) {
+        Collection<ArrayList<ChessMove>> moves = new ArrayList<>();
+        if (iterative){
+            for (int[] move : possibilities){
+                int current_row = myPosition.getRow();
+                int current_column = myPosition.getColumn();
+
+                while(true){
+                    current_row += move[0];
+                    current_column += move[1];
+
+                    //checks if piece is off the board
+                    if (current_row < 0 | current_row > 9 | current_column < 0 | current_column > 9){
+                        break;
+                    }
+                    ChessPosition new_position = new ChessPosition(current_row, current_column);
+                    if (board.getPiece(new_position) != null){
+                        ChessGame.TeamColor piece = board.getPiece(new_position).pieceColor;
+                        
+                    };
+
+                }
+            }
+        }
+        else if (!iterative){
+
+        }
+        else {
+            return null;
+        }
     }
 
     @Override
