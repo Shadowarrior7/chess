@@ -99,7 +99,7 @@ public class ChessPiece {
                     ChessPosition new_position = new ChessPosition(current_row, current_column);
                     if (board.getPiece(new_position) != null){
                         ChessGame.TeamColor piece = board.getPiece(new_position).pieceColor;
-                        
+
                     };
 
                 }
