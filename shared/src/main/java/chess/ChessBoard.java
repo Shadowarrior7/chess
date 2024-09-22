@@ -47,7 +47,7 @@ public class ChessBoard {
     public void resetBoard() {
         //the board is 8 accoss and 8 up
         //adds black pieces
-        for (int i = 1; i < 8; i++) {
+        for (int i = 1; i < 9; i++) {
             ChessPiece pawn = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
             addPiece(new ChessPosition(7, i), pawn);
             if (i ==1){
@@ -73,9 +73,9 @@ public class ChessBoard {
 
 
         //adds white pieces
-        for (int i = 0; i < 8; i++) {
+        for (int i = 1; i < 9; i++) {
             ChessPiece pawn = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-            addPiece(new ChessPosition(7, i), pawn);
+            addPiece(new ChessPosition(2, i), pawn);
             if (i ==1){
                 ChessPiece rook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
                 addPiece(new ChessPosition(1, i), rook);
@@ -101,8 +101,9 @@ public class ChessBoard {
 
     @Override
     public String toString() {
+
         return "ChessBoard{" +
-                "squares=" + Arrays.toString(squares) +
+                "squares=" + Arrays.deepToString(squares) +
                 '}';
     }
 
@@ -110,8 +111,9 @@ public class ChessBoard {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         ChessBoard that = (ChessBoard) o;
-        return Objects.deepEquals(squares, that.squares);
+        return Arrays.deepEquals(squares, that.squares);
     }
 
     @Override
