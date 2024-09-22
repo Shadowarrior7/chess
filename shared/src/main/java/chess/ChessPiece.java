@@ -1,5 +1,6 @@
 package chess;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
@@ -82,9 +83,9 @@ public class ChessPiece {
         }
         else if (pieceType.equals(PieceType.PAWN)) {
             //black move, black right, black left
-            int[][] pawn_moves_black = {{-1,0},{-1,-1},{-1,1}};
+            int[][] pawn_moves_black = {{-1,0},{-2,0},{-1,-1},{-1,1}};
             //white move, white right, white left
-            int[][] pawn_moves_white = {{1,0},{1,1},{1,-1}};
+            int[][] pawn_moves_white = {{1,0},{2,0},{1,1},{1,-1}};
 
             if (ChessGame.TeamColor.BLACK.equals(getTeamColor())) {
                 return check_for_moves(pawn_moves_black, board, myPosition, false);
@@ -146,28 +147,108 @@ public class ChessPiece {
         else if (!iterative){
             if (getPieceType().equals(PieceType.PAWN)){
                 int first_move = 0;
+                PieceType promotion = null;
                 for (int[] move : possibilities) {
-                    ++first_move;
+                    ++first_move; //keeps track of which move is happening
                     while(true) {
+                        //sets current pos
                         int current_row = myPosition.getRow();
                         int current_column = myPosition.getColumn();
+                        //makes the move
                         current_row += move[0];
                         current_column += move[1];
+                        //checks for out of bounds
                         if (current_row < 1 || current_row > 8 || current_column < 1 || current_column > 8) {
                             break;
                         }
+
                         ChessPosition new_position = new ChessPosition(current_row, current_column);
                         if (first_move == 1){
                             if (board.getPiece(new_position) != null){
                                 break;
                             }
+                            else {
+                                if (current_row == 1 || current_row == 8){
+                                    promotion = PieceType.QUEEN;
+                                    moves.add(new ChessMove(myPosition, new_position, promotion));
+                                    promotion = PieceType.ROOK;
+                                    moves.add(new ChessMove(myPosition, new_position, promotion));
+                                    promotion = PieceType.BISHOP;
+                                    moves.add(new ChessMove(myPosition, new_position, promotion));
+                                    promotion = PieceType.KNIGHT;
+                                    moves.add(new ChessMove(myPosition, new_position, promotion));
+                                    promotion = null;
+                                    break;
+                                }
+                                else {
+                                    ChessMove move_to_add = new ChessMove(myPosition, new_position, promotion);
+                                    moves.add(move_to_add);
+                                    break;
+                                }
+                            }
+                        }
+                        else if(first_move == 2){
+                            //checks if in the starting pos
+                            if ((myPosition.getRow() == 2 && getTeamColor().equals(ChessGame.TeamColor.WHITE)) || (myPosition.getRow() == 7 && getTeamColor().equals(ChessGame.TeamColor.BLACK))){
+                                if (board.getPiece(new_position) != null){
+                                    break;
+                                }
+
+                                if (getTeamColor().equals(ChessGame.TeamColor.WHITE)){
+                                    ChessPosition second_check = new ChessPosition(myPosition.getRow() +1 , myPosition.getColumn());
+                                    if (board.getPiece(second_check) != null){
+                                        System.out.println("white pawn cannot double jump");
+                                        break;
+                                    }
+                                }
+                                else if (getTeamColor().equals(ChessGame.TeamColor.BLACK)){
+                                    ChessPosition second_check = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn());
+                                    if (board.getPiece(second_check) != null){
+                                        System.out.println("black pawn cannot double jump");
+                                        break;
+                                    }
+                                }
+
+                                if (current_row == 1 || current_row == 8){
+                                    promotion = PieceType.QUEEN;
+                                    moves.add(new ChessMove(myPosition, new_position, promotion));
+                                    promotion = PieceType.ROOK;
+                                    moves.add(new ChessMove(myPosition, new_position, promotion));
+                                    promotion = PieceType.BISHOP;
+                                    moves.add(new ChessMove(myPosition, new_position, promotion));
+                                    promotion = PieceType.KNIGHT;
+                                    moves.add(new ChessMove(myPosition, new_position, promotion));
+                                    promotion = null;
+                                    break;
+                                }
+                                else {
+                                    ChessMove move_to_add = new ChessMove(myPosition, new_position, promotion);
+                                    moves.add(move_to_add);
+                                    break;
+                                }
+                            }
+
                         }
                         else {
                             if (board.getPiece(new_position) != null){
                                 if(!board.getPiece(new_position).getTeamColor().equals(my_color)){
-                                    ChessMove move_to_add = new ChessMove(myPosition, new_position, null);
-                                    moves.add(move_to_add);
-                                    break;
+                                    if (current_row == 1 || current_row == 8){
+                                        promotion = PieceType.QUEEN;
+                                        moves.add(new ChessMove(myPosition, new_position, promotion));
+                                        promotion = PieceType.ROOK;
+                                        moves.add(new ChessMove(myPosition, new_position, promotion));
+                                        promotion = PieceType.BISHOP;
+                                        moves.add(new ChessMove(myPosition, new_position, promotion));
+                                        promotion = PieceType.KNIGHT;
+                                        moves.add(new ChessMove(myPosition, new_position, promotion));
+                                        promotion = null;
+                                        break;
+                                    }
+                                    else {
+                                        ChessMove move_to_add = new ChessMove(myPosition, new_position, promotion);
+                                        moves.add(move_to_add);
+                                        break;
+                                    }
                                 }
                             }
                         }
