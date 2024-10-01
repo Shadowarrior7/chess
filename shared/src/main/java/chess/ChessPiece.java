@@ -101,6 +101,7 @@ public class ChessPiece {
     public Collection<ChessMove> check_for_moves(int[][] possibilities, ChessBoard board, ChessPosition myPosition, Boolean iterative) {
         Collection<ChessMove> moves = new ArrayList<>();
         ChessGame.TeamColor my_color = getTeamColor();
+
         if (iterative) {
             for (int[] move : possibilities){
                 //set cord for current position
@@ -313,3 +314,4 @@ public class ChessPiece {
         return Objects.hash(pieceColor, type);
     }
 }
+
