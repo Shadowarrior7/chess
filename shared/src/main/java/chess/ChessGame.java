@@ -58,19 +58,14 @@ public class ChessGame {
         }
         Collection<ChessMove> moves = piece.pieceMoves(board, startPosition); //gives a collection of moves the pieces can Physically make
         for (ChessMove move : moves) {
-            ChessPosition new_pos = move.getEndPosition();
+            board.addPiece(move.getEndPosition(), piece);
+            if (isInCheck(my_color) || isInCheckmate(my_color) || isInStalemate(my_color)) {
+                moves.remove(move);
+            }
         }
-        //throw new RuntimeException("Not implemented");
+        return moves;
     }
 
-    public Collection<ChessPiece> get_opponents_pieces(ChessBoard board, ChessGame.TeamColor opposite_team) {
-        Collection<ChessPiece> opponents_pieces = new ArrayList<ChessPiece>();
-        int j =0;
-        for (int i = 0; i < 8; ++i){
-            ChessPiece piece = board.getPiece(new ChessPosition(i,j));
-            if(piece.getTeamColor() != opposite_team){}
-        }
-    }
 
     /**
      * Makes a move in a chess game
@@ -79,8 +74,29 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        ChessBoard board = getBoard();
+        ChessPiece piece = board.getPiece(move.getEndPosition());
+        ChessGame.TeamColor piece_color = piece.getTeamColor();
+        TeamColor turn_color = getTeamTurn();
 
-        //throw new RuntimeException("Not implemented");
+        if(turn_color != piece_color) {
+            System.out.print("not your turn");
+            throw new InvalidMoveException();
+        }
+        Collection<ChessMove> legal_moves = validMoves(move.getStartPosition());
+        boolean is_move_legal = false;
+        for(ChessMove legal_move : legal_moves) {
+            if (move.getEndPosition().equals(legal_move.getEndPosition())) {
+                is_move_legal = true;
+                break;
+            }
+        }
+        if(!is_move_legal) {
+            throw new InvalidMoveException();
+        }
+
+        //this should execute the move, but idk
+        current_board.addPiece(move.getEndPosition(), piece);
     }
 
     /**
@@ -112,6 +128,21 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         throw new RuntimeException("Not implemented");
+    }
+
+
+    public ChessPosition get_king_position(TeamColor teamColor) {
+        ChessBoard board = getBoard();
+        int j =0;
+        for (int i = 0; i < 8; i++) {
+            ChessPosition new_position = new ChessPosition(i, j);
+            ChessPiece piece = board.getPiece(new_position);
+            if (piece.getPieceType().equals(ChessPiece.PieceType.KING) && piece.getTeamColor().equals(teamColor)) {
+                return new_position;
+            }
+            ++j;
+        }
+        return null;
     }
 
     /**
