@@ -96,7 +96,37 @@ public class ChessGame {
         }
 
         //this should execute the move, but idk
+        board_changer(move.getStartPosition());
         current_board.addPiece(move.getEndPosition(), piece);
+    }
+
+    public void board_changer(ChessPosition position_to_remove) {
+
+        ChessBoard new_board = new ChessBoard();
+        int j = 0;
+        for(int i =0; i < 8; ++i){
+            ChessPosition current_position = new ChessPosition(i, j);
+            ChessPiece current_piece = current_board.getPiece(current_position);
+            if (current_piece != null && !current_position.equals(position_to_remove)) {
+                new_board.addPiece(current_position, current_piece);
+            }
+        }
+        current_board = new_board;
+    }
+
+    public Collection<ChessPosition> get_enemy_positions(TeamColor teamColor) {
+        Collection<ChessPosition> positions = new HashSet<>();
+        ChessBoard board = getBoard();
+        int j =0;
+        for(int i =0; i < 8; ++i){
+            ChessPosition current_position = new ChessPosition(i, j);
+            ChessPiece current_piece = board.getPiece(current_position);
+            if (current_piece !=  null && current_piece.getTeamColor() != teamColor) {
+                positions.add(current_position);
+            }
+            ++j;
+        }
+        return positions;
     }
 
     /**
@@ -106,7 +136,19 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessPosition> enemy_positions = get_enemy_positions(teamColor);
+        ChessPosition my_king_pos = get_king_position(teamColor);
+
+        for(ChessPosition enemy : enemy_positions){
+            ChessPiece enemy_piece = current_board.getPiece(enemy);
+            Collection<ChessMove> enemy_moves = enemy_piece.pieceMoves(current_board, enemy);
+            for(ChessMove move : enemy_moves){
+                if (move.getEndPosition().equals(my_king_pos)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -116,7 +158,28 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition my_king_pos = get_king_position(teamColor);
+        Collection<ChessPosition> enemy_positions = get_enemy_positions(teamColor);
+        Collection<ChessMove> king_moves = getBoard().getPiece(my_king_pos).pieceMoves(getBoard(), my_king_pos);
+        if(isInCheck(teamColor)){
+            for(ChessPosition enemy: enemy_positions){
+                ChessPiece enemy_piece = current_board.getPiece(enemy);
+                Collection<ChessMove> enemy_moves = enemy_piece.pieceMoves(current_board, enemy);
+                for(ChessMove enemy_move : enemy_moves){
+                    for(ChessMove king_move : king_moves){
+                        if(!enemy_move.getEndPosition().equals(king_move.getEndPosition())) {
+                            continue;
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        else{
+            return false;
+        }
     }
 
     /**
