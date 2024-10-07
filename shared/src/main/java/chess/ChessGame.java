@@ -59,18 +59,20 @@ public class ChessGame {
         if (piece == null) {
             return null;
         }
-        Collection<ChessMove> moves = piece.pieceMoves(board, startPosition); //gives a collection of moves the pieces can Physically make
+        Collection<ChessMove> moves = piece.pieceMoves(current_board, startPosition); //gives a collection of moves the pieces can Physically make
         Collection<ChessMove> validMoves  = new ArrayList<>();
         for (ChessMove move : moves) {
-            if(board.getPiece(move.getEndPosition()) != null) {
+            if(current_board.getPiece(move.getEndPosition()) != null) {
                 board_changer(move.getEndPosition());
             }
-            board.addPiece(move.getEndPosition(), piece);
+            current_board.addPiece(move.getEndPosition(), piece);
             board_changer(startPosition);
             if (!isInCheck(my_color) && !isInCheckmate(my_color) && !isInStalemate(my_color)) {
                 validMoves.add(move);
             }
             current_board = new_board;
+            //board.setSquares(copyBoard(current_board));
+
         }
         return validMoves;
     }
@@ -78,8 +80,8 @@ public class ChessGame {
     public ChessPiece[][] copyBoard(ChessBoard board) {
         ChessPiece[][] new_board = new ChessPiece[9][9];
         ChessPiece[][] old_board = board.getSquares();
-        for (int i = 0; i < old_board.length; i++) {
-            for (int j = 0; j < old_board[i].length; j++) {
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
                 new_board[i][j] = old_board[i][j];
             }
         }
@@ -143,7 +145,7 @@ public class ChessGame {
                 }
             }
         }
-        current_board = new_board;
+        current_board.setSquares(copyBoard(new_board));
     }
 
     public Collection<ChessPosition> get_enemy_positions(TeamColor teamColor) {
@@ -262,8 +264,8 @@ public class ChessGame {
 
     public ChessPosition get_king_position(TeamColor teamColor) {
         ChessBoard board = getBoard();
-        for (int j = 0; j< 9; ++j) {
-            for (int i = 0; i < 9; i++) {
+        for (int j = 1; j < 9; ++j) {
+            for (int i = 1; i < 9; ++i) {
                 ChessPosition new_position = new ChessPosition(i, j);
                 ChessPiece piece = board.getPiece(new_position);
                 if (piece == null) {
