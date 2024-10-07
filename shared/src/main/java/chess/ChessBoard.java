@@ -27,6 +27,14 @@ public class ChessBoard {
         //throw new RuntimeException("Not implemented");
     }
 
+    public ChessPiece[][] getSquares() {
+        return squares;
+    }
+
+    public void setSquares(ChessPiece[][] squares) {
+        this.squares = squares;
+    }
+
     /**
      * Gets a chess piece on the chessboard
      *

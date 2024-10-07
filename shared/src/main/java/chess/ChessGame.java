@@ -50,7 +50,10 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+
+        ChessBoard new_board = new ChessBoard();
         ChessBoard board = getBoard();
+        new_board.setSquares(copyBoard(board));
         ChessPiece piece = board.getPiece(startPosition);
         ChessGame.TeamColor my_color = piece.getTeamColor();
         if (piece == null) {
@@ -62,16 +65,26 @@ public class ChessGame {
             if(board.getPiece(move.getEndPosition()) != null) {
                 board_changer(move.getEndPosition());
             }
-            getBoard().addPiece(move.getEndPosition(), piece);
+            board.addPiece(move.getEndPosition(), piece);
             board_changer(startPosition);
             if (!isInCheck(my_color) && !isInCheckmate(my_color) && !isInStalemate(my_color)) {
                 validMoves.add(move);
             }
-            setBoard(board);
+            current_board = new_board;
         }
         return validMoves;
     }
 
+    public ChessPiece[][] copyBoard(ChessBoard board) {
+        ChessPiece[][] new_board = new ChessPiece[9][9];
+        ChessPiece[][] old_board = board.getSquares();
+        for (int i = 0; i < old_board.length; i++) {
+            for (int j = 0; j < old_board[i].length; j++) {
+                new_board[i][j] = old_board[i][j];
+            }
+        }
+        return new_board;
+    }
 
     /**
      * Makes a move in a chess game
@@ -134,7 +147,7 @@ public class ChessGame {
     }
 
     public Collection<ChessPosition> get_enemy_positions(TeamColor teamColor) {
-        Collection<ChessPosition> positions = new HashSet<>();
+        Collection<ChessPosition> positions = new ArrayList<>();
         ChessBoard board = getBoard();
         for (int j = 1; j < 9; ++j) {
             for (int i = 1; i < 9; ++i) {
@@ -169,7 +182,6 @@ public class ChessGame {
             for(ChessMove move : enemy_moves){
                 if (move.getEndPosition().equals(my_king_pos)) {
                     System.out.println("in check");
-                    
                     return true;
                 }
             }
