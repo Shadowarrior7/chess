@@ -47,16 +47,12 @@ public class Server {
                 UserData register_request = serializer.fromJson(request.body(), UserData.class);
                 //System.out.println(request.body());
                 var result = register(register_request);
-                if (result.equals("user already exists")){
-                    response.status(403);
-                    return serializer.toJson("{ \"message\": \"Error: already taken\" }");
-                }
                 response.status(200);
                 System.out.println(result);
                 return result;
-            }catch (Exception e){
-                response.status(500);
-                return serializer.toJson("{ message: Error: (" + e.getMessage() + ") }");
+            }catch (GenericException e){
+                response.status(e.code);
+                return serializer.toJson(e);
             }
         });
 
@@ -64,18 +60,25 @@ public class Server {
             response.type("application/json");
             try {
                 UserData loginRequest = serializer.fromJson(request.body(), UserData.class);
+                //System.out.println(loginRequest);
                 String result = login(loginRequest.username(), loginRequest.password());
                 response.status(200);
-                return "{}";
+                System.out.println("success");
+                return result;
             } catch (GenericException e) {
+                System.out.println("error here in login");
                 response.status(e.code);
-                return serializer.toJson(e);
+                System.out.println("error: " + e);
+                var json = serializer.toJson(e);
+                System.out.println(json);
+                return json;
             }
         });
 
         Spark.delete("/session", (request, response) -> { //LOGOUT
             response.type("application/json");
             try {
+                AuthData logoutRequest = serializer.fromJson(request.body(), AuthData.class);
                 response.status(200);
                 return "{}";
             } catch (Exception e) {
@@ -130,11 +133,11 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
-    public String register(UserData registerRequest){
+    public String register(UserData registerRequest) throws GenericException {
         var serializer = new Gson();
         UserData user = userService.getUser(registerRequest.username());
         if (user != null){
-            return "user already exists";
+            throw new GenericException("Error: already taken", 403);
         }
         userService.registerUser(registerRequest);
         AuthData result = authService.addAuth(registerRequest.username());
@@ -142,13 +145,15 @@ public class Server {
         return serializer.toJson(result);
     }
 
-    public String login(String username, String password){
+    public String login(String username, String password) {
         var serializer = new Gson();
         UserData user = userService.getUser(username);
         if (user == null){
+            System.out.println("user not found");
             throw new GenericException("Error: user not found", 500);
         }
-        if(!password.equals(userService.getPassword(password))){
+        if(!password.equals(userService.getPassword(username))){
+            System.out.println("password does not match");
             throw new GenericException("Error: unauthorized", 401);
         }
 

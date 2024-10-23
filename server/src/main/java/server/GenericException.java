@@ -1,9 +1,15 @@
 package server;
 
-public class GenericException extends RuntimeException {
+import java.io.Serializable;
+
+public class GenericException extends RuntimeException implements Serializable {
     public int code;
+
     public GenericException(String message, int code) {
         super(message);
-        code = this.code;
+        this.code = code;
+    }
+    public int getcode(){
+        return code;
     }
 }
