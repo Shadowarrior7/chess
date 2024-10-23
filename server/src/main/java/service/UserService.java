@@ -16,7 +16,7 @@ public class UserService {
         return usersDao;
     }
 
-    void updateUsersDao(MemoryUserDao users){
+    void setUsersDao(MemoryUserDao users){
         usersDao = users;
     }
     public void registerUser(UserData registerRequest){
@@ -24,6 +24,16 @@ public class UserService {
     }
 
     public UserData getUser(String username){
-        return usersDao.getUser(username);
+        var result = usersDao.getUser(username);
+        System.out.println(result);
+        return result;
+    }
+
+    public String getPassword(String username){
+        return usersDao.getUserPassword(username);
+    }
+
+    public void clear(){
+        usersDao.clear();
     }
 }

@@ -1,4 +1,30 @@
 package service;
 
+import dataaccess.MemoryAuthDao;
+import model.AuthData;
+
 public class AuthService {
+    public MemoryAuthDao authDao;
+
+    public AuthService(){
+        authDao = new MemoryAuthDao();
+    }
+
+    public MemoryAuthDao getAuthDao(){
+        return authDao;
+    }
+
+    public void setAuthDao(MemoryAuthDao newAuth){
+        authDao = newAuth;
+    }
+     public AuthData addAuth(String username){
+        var token = authDao.addAuthData(username);
+        return authDao.getAuthDate(token);
+     }
+
+     public void clear(){
+        authDao.clear();
+     }
+
+
 }

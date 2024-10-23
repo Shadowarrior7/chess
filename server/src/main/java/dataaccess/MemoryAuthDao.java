@@ -2,17 +2,21 @@ package dataaccess;
 
 import model.AuthData;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
 public class MemoryAuthDao {
     private Collection<AuthData> authData;
 
+    public MemoryAuthDao(){
+        authData = new ArrayList<AuthData>();
+    }
     //the functions here are the dataAccess layer
     public static String generateToken(){
         return UUID.randomUUID().toString();
     }
-    void addAuthData(String username){
+    public String addAuthData(String username){
         var authToken = generateToken();
         int userFound = 0;
         for (AuthData auth: authData){
@@ -26,9 +30,10 @@ public class MemoryAuthDao {
         if(userFound == 0){
             authData.add(new AuthData(authToken, username));
         }
+        return authToken;
     }
 
-    void deleteAuthData(String authToken){
+    public void deleteAuthData(String authToken){
         for (AuthData auth: authData){
             if (auth.authToken().equals(authToken)){
                 authData.remove(auth);
@@ -37,7 +42,7 @@ public class MemoryAuthDao {
         }
     }
 
-    AuthData getAuthDate(String authToken){
+    public AuthData getAuthDate(String authToken){
         for (AuthData auth: authData){
             if (auth.authToken().equals(authToken)){
                 return auth;
@@ -46,7 +51,7 @@ public class MemoryAuthDao {
         return null;
     }
 
-    void clear(){
+    public void clear(){
         authData.clear();
     }
 }

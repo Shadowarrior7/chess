@@ -16,9 +16,11 @@ public class MemoryUserDao {
     public  UserData getUser(String username){
         for (UserData user: users){
             if (user.username().equals(username)){
+                //System.out.println("user found" + user+":");
                 return user;
             }
         }
+        System.out.println("error finding user");
         return null;
     }
 

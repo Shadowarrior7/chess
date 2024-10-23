@@ -2,22 +2,26 @@ package dataaccess;
 
 import model.GameData;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class MemoryGameDao {
     Collection<GameData> games;
 
+    public MemoryGameDao(){
+        games = new ArrayList<GameData>();
+    }
     //DataAccess
-    Collection<GameData> getGameDataList(){
+    public Collection<GameData> getGameDataList(){
         return games;
     }
 
-    int createGame(GameData newGame){
+    public int createGame(GameData newGame){
         games.add(newGame);
         return newGame.gameID();
     }
 
-    GameData getGame(int gameID){
+    public GameData getGame(int gameID){
         for (GameData game: games){
             if (game.gameID() == gameID){
                 return game;
@@ -26,7 +30,7 @@ public class MemoryGameDao {
         return null;
     }
 
-    void updateGame(GameData updatedGame){
+    public void updateGame(GameData updatedGame){
         for (GameData game: games){
             if (game.equals(updatedGame)){
                 games.remove(game);
@@ -35,7 +39,7 @@ public class MemoryGameDao {
         }
     }
 
-    void clear(){
+    public void clear(){
         games.clear();
     }
 }
