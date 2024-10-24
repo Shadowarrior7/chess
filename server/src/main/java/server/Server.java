@@ -1,9 +1,14 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.JsonNull;
+import com.mysql.cj.conf.ConnectionUrlParser;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
+import model.joinGame;
+import org.slf4j.helpers.FormattingTuple;
 import passoff.model.TestJoinRequest;
 import service.AuthService;
 import service.UserService;
@@ -12,6 +17,7 @@ import service.UserService.*;
 import service.GameService;
 
 import java.io.Reader;
+import java.util.Collection;
 import java.util.Map;
 
 public class Server {
@@ -96,28 +102,47 @@ public class Server {
         Spark.get("/game", (request, response) -> { //LIST GAMES
             response.type("application/json");
             try {
+                String listGamesRequest = serializer.fromJson(request.headers("Authorization"), String.class);
+                Collection<GameData> games = listGames(listGamesRequest);
+                System.out.println("games"+ games);
+                var games_json = serializer.toJson(games);
+                System.out.println("games_json: " + games_json);
                 response.status(200);
-                return "{}";
-            } catch (Exception e) {
-                response.status(500);
-                return "{ message: Error: (" + e.getMessage() + ") }";
+                return games_json;
+            } catch (GenericException e) {
+                response.status(e.code);
+                return serializer.toJson(Map.of("message", e.getMessage()));
             }
         });
 
         Spark.post("/game", (request, response) -> { //CREATE GAME
             response.type("application/json");
             try {
+                String createGameRequest = serializer.fromJson(request.headers("Authorization"), String.class);
+                System.out.println("Auth: " + createGameRequest);
+                GameData name = serializer.fromJson(request.body(), GameData.class);
+                System.out.println("Creating game: " + name);
+                int gameID2 = createGame(createGameRequest, name.gameName());
+                String gameID = String.valueOf(gameID2);
                 response.status(200);
-                return "{}";
-            } catch (Exception e) {
-                response.status(500);
-                return "{ message: Error: (" + e.getMessage() + ") }";
+                var result = serializer.toJson(new GameData(gameID2, "", "", "", new ChessGame()));
+                System.out.println("\nResult: "+ result);
+                return result;
+            } catch (GenericException e) {
+                response.status(e.code);
+                return serializer.toJson(Map.of("message", e.getMessage()));
             }
         });
 
         Spark.put("/game", (request, response) -> { //JOIN GAME
             response.type("application/json");
             try {
+
+                joinGame joinGameRequest = serializer.fromJson(request.body(), joinGame.class);
+                String token = serializer.fromJson(request.headers("Authorization"), String.class);
+
+                System.out.println("GameData: "+ joinGameRequest);
+                joinGame(joinGameRequest.playerColor(), joinGameRequest.gameID(), token);
                 response.status(200);
                 return "{}";
             } catch (Exception e) {
@@ -182,6 +207,38 @@ public class Server {
         authService.deleteAuthData(authData);
     }
 
+    public Collection<GameData> listGames(String token){
+        System.out.println("request: "+ token);
+        AuthData authData = authService.getAuthenByToken(token);
+        System.out.println(authData);
+        if (authData == null){
+            throw new GenericException("Error: Unauthorized", 401);
+        }
+        return gameService.getAllGames();
+    }
+
+    public int createGame(String token, String name){
+        System.out.println("request: "+ token);
+        AuthData authData = authService.getAuthenByToken(token);
+        System.out.println(authData);
+        if (authData == null){
+            throw new GenericException("Error: Unauthorized", 401);
+        }
+        if(name == null){
+            throw new GenericException("Error: bad request", 400);
+        }
+        int gameID = gameService.createGame(name);
+        return gameID;
+    }
+
+    public void joinGame(String playerColor, String gameID, String token){
+        AuthData authData = authService.getAuthenByToken(token);
+        if (authData == null){
+            throw new GenericException("Error: Unauthorized", 401);
+        }
+        GameData game = gameService.getGame(gameID);
+        if(game.blackUsername()!= null && )
+    }
     public void clear(){
         userService.clear();
         gameService.clear();

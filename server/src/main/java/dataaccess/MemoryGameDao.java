@@ -14,6 +14,7 @@ public class MemoryGameDao {
     }
     //DataAccess
     public Collection<GameData> getGameDataList(){
+        System.out.println("games in mem:" + games);
         return games;
     }
 
