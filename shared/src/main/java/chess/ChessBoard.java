@@ -1,8 +1,6 @@
 package chess;
 
-import javax.swing.text.Position;
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -11,7 +9,8 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private ChessPiece[][] squares= new ChessPiece [9][9];
+    private ChessPiece[][] squares = new ChessPiece[9][9];
+
     public ChessBoard() {
         //resetBoard();
     }
@@ -58,20 +57,20 @@ public class ChessBoard {
         for (int i = 1; i < 9; i++) {
             ChessPiece pawn = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
             addPiece(new ChessPosition(7, i), pawn);
-            if (i ==1){
+            if (i == 1) {
                 ChessPiece rook = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
                 addPiece(new ChessPosition(8, i), rook);
-                addPiece(new ChessPosition(8, i+7), rook);
+                addPiece(new ChessPosition(8, i + 7), rook);
             }
-            if (i ==2){
+            if (i == 2) {
                 ChessPiece knight = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
                 addPiece(new ChessPosition(8, i), knight);
-                addPiece(new ChessPosition(8, i+5), knight);
+                addPiece(new ChessPosition(8, i + 5), knight);
             }
-            if (i ==3){
+            if (i == 3) {
                 ChessPiece bishop = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
                 addPiece(new ChessPosition(8, i), bishop);
-                addPiece(new ChessPosition(8, i+3), bishop);
+                addPiece(new ChessPosition(8, i + 3), bishop);
             }
         }
         ChessPiece king = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
@@ -84,27 +83,27 @@ public class ChessBoard {
         for (int i = 1; i < 9; i++) {
             ChessPiece pawn = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
             addPiece(new ChessPosition(2, i), pawn);
-            if (i ==1){
+            if (i == 1) {
                 ChessPiece rook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
                 addPiece(new ChessPosition(1, i), rook);
-                addPiece(new ChessPosition(1, i+7), rook);
+                addPiece(new ChessPosition(1, i + 7), rook);
             }
-            if (i ==2){
+            if (i == 2) {
                 ChessPiece knight = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
                 addPiece(new ChessPosition(1, i), knight);
-                addPiece(new ChessPosition(1, i+5), knight);
+                addPiece(new ChessPosition(1, i + 5), knight);
             }
-            if (i ==3){
+            if (i == 3) {
                 ChessPiece bishop = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
                 addPiece(new ChessPosition(1, i), bishop);
-                addPiece(new ChessPosition(1, i+3), bishop);
+                addPiece(new ChessPosition(1, i + 3), bishop);
             }
         }
         ChessPiece king2 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
         ChessPiece queen2 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
         addPiece(new ChessPosition(1, 4), queen2);
         addPiece(new ChessPosition(1, 5), king2);
-        System.out.print(toString());
+        System.out.print(this);
     }
 
     @Override
