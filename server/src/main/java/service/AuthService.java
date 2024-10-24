@@ -22,6 +22,14 @@ public class AuthService {
         return authDao.getAuthDate(token);
      }
 
+     public AuthData getAuthenByToken(String token){
+        return authDao.getAuthDate(token);
+     }
+
+     public void deleteAuthData(AuthData data){
+        authDao.deleteAuthData(data.authToken());
+     }
+
      public void clear(){
         authDao.clear();
      }

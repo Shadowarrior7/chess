@@ -11,6 +11,9 @@ import spark.*;
 import service.UserService.*;
 import service.GameService;
 
+import java.io.Reader;
+import java.util.Map;
+
 public class Server {
     private UserService userService;
     private GameService gameService;
@@ -52,7 +55,7 @@ public class Server {
                 return result;
             }catch (GenericException e){
                 response.status(e.code);
-                return serializer.toJson(e);
+                return serializer.toJson(Map.of("message", e.getMessage()));
             }
         });
 
@@ -69,7 +72,7 @@ public class Server {
                 System.out.println("error here in login");
                 response.status(e.code);
                 System.out.println("error: " + e);
-                var json = serializer.toJson(e);
+                var json = serializer.toJson(Map.of("message", e.getMessage()));
                 System.out.println(json);
                 return json;
             }
@@ -78,12 +81,15 @@ public class Server {
         Spark.delete("/session", (request, response) -> { //LOGOUT
             response.type("application/json");
             try {
-                AuthData logoutRequest = serializer.fromJson(request.body(), AuthData.class);
+                System.out.println("og request: " + request.headers("Authorization"));
+                String logoutRequest = serializer.fromJson(request.headers("Authorization"), String.class);
+                System.out.println("logout: "+ logoutRequest);
+                logout(logoutRequest);
                 response.status(200);
                 return "{}";
-            } catch (Exception e) {
-                response.status(500);
-                return "{ message: Error: (" + e.getMessage() + ") }";
+            } catch (GenericException e) {
+                response.status(e.code);
+                return serializer.toJson(Map.of("message", e.getMessage()));
             }
         });
 
@@ -136,8 +142,13 @@ public class Server {
     public String register(UserData registerRequest) throws GenericException {
         var serializer = new Gson();
         UserData user = userService.getUser(registerRequest.username());
+        System.out.println("here" + user);
         if (user != null){
             throw new GenericException("Error: already taken", 403);
+        }
+        if((registerRequest.username() == null) || (registerRequest.password() == null) || (registerRequest.email() == null)){
+            throw new GenericException("Error: Bad Request", 400);
+
         }
         userService.registerUser(registerRequest);
         AuthData result = authService.addAuth(registerRequest.username());
@@ -150,7 +161,7 @@ public class Server {
         UserData user = userService.getUser(username);
         if (user == null){
             System.out.println("user not found");
-            throw new GenericException("Error: user not found", 500);
+            throw new GenericException("Error: user not found", 401);
         }
         if(!password.equals(userService.getPassword(username))){
             System.out.println("password does not match");
@@ -159,6 +170,16 @@ public class Server {
 
         return serializer.toJson(authService.addAuth(username));
 
+    }
+
+    public void logout(String token){
+        System.out.println("request: "+ token);
+        AuthData authData = authService.getAuthenByToken(token);
+        System.out.println(authData);
+        if (authData == null){
+            throw new GenericException("Error: Unauthorized", 401);
+        }
+        authService.deleteAuthData(authData);
     }
 
     public void clear(){

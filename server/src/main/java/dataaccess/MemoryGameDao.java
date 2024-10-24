@@ -1,5 +1,6 @@
 package dataaccess;
 
+import model.AuthData;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class MemoryGameDao {
             }
         }
     }
+
 
     public void clear(){
         games.clear();
