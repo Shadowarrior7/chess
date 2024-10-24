@@ -17,6 +17,7 @@ import service.UserService.*;
 import service.GameService;
 
 import java.io.Reader;
+import java.rmi.registry.Registry;
 import java.util.Collection;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public class Server {
                 //System.out.println(request.body());
                 var result = register(register_request);
                 response.status(200);
-                System.out.println(result);
+                System.out.println("Register result: "+ result);
                 return result;
             }catch (GenericException e){
                 response.status(e.code);
@@ -79,7 +80,7 @@ public class Server {
                 response.status(e.code);
                 System.out.println("error: " + e);
                 var json = serializer.toJson(Map.of("message", e.getMessage()));
-                System.out.println(json);
+                System.out.println("login error: "+ json);
                 return json;
             }
         });
@@ -105,10 +106,18 @@ public class Server {
                 String listGamesRequest = serializer.fromJson(request.headers("Authorization"), String.class);
                 Collection<GameData> games = listGames(listGamesRequest);
                 System.out.println("games"+ games);
-                var games_json = serializer.toJson(games);
-                System.out.println("games_json: " + games_json);
+                String games_json = serializer.toJson(games);
+                String new_games =games_json.substring(1, games_json.length()-1);
+                //String new_games = "{" + games_json + "}";
+                if (new_games.isEmpty()){
+                    response.status(200);
+                    System.out.println("new_games is empty");
+                    return "{}";
+                }
+                System.out.println("games_json: " + new_games);
+
                 response.status(200);
-                return games_json;
+                return new_games;
             } catch (GenericException e) {
                 response.status(e.code);
                 return serializer.toJson(Map.of("message", e.getMessage()));
@@ -123,10 +132,10 @@ public class Server {
                 GameData name = serializer.fromJson(request.body(), GameData.class);
                 System.out.println("Creating game: " + name);
                 int gameID2 = createGame(createGameRequest, name.gameName());
-                String gameID = String.valueOf(gameID2);
-                response.status(200);
+                //String gameID = String.valueOf(gameID2);
                 var result = serializer.toJson(new GameData(gameID2, "", "", "", new ChessGame()));
                 System.out.println("\nResult: "+ result);
+                response.status(200);
                 return result;
             } catch (GenericException e) {
                 response.status(e.code);
@@ -145,9 +154,10 @@ public class Server {
                 joinGame(joinGameRequest.playerColor(), joinGameRequest.gameID(), token);
                 response.status(200);
                 return "{}";
-            } catch (Exception e) {
-                response.status(500);
-                return "{ message: Error: (" + e.getMessage() + ") }";
+            } catch (GenericException e) {
+                System.out.println("error here in join game");
+                response.status(e.code);
+                return serializer.toJson(Map.of("message", e.getMessage()));
             }
         });
 
@@ -177,7 +187,7 @@ public class Server {
         }
         userService.registerUser(registerRequest);
         AuthData result = authService.addAuth(registerRequest.username());
-        System.out.println(result);
+        System.out.println("Register result 2: "+ result);
         return serializer.toJson(result);
     }
 
@@ -200,7 +210,7 @@ public class Server {
     public void logout(String token){
         System.out.println("request: "+ token);
         AuthData authData = authService.getAuthenByToken(token);
-        System.out.println(authData);
+        System.out.println("logout authData: "+ authData);
         if (authData == null){
             throw new GenericException("Error: Unauthorized", 401);
         }
@@ -210,7 +220,7 @@ public class Server {
     public Collection<GameData> listGames(String token){
         System.out.println("request: "+ token);
         AuthData authData = authService.getAuthenByToken(token);
-        System.out.println(authData);
+        System.out.println("list games authdata: "+ authData);
         if (authData == null){
             throw new GenericException("Error: Unauthorized", 401);
         }
@@ -220,7 +230,7 @@ public class Server {
     public int createGame(String token, String name){
         System.out.println("request: "+ token);
         AuthData authData = authService.getAuthenByToken(token);
-        System.out.println(authData);
+        System.out.println("create games authdata: "+ authData);
         if (authData == null){
             throw new GenericException("Error: Unauthorized", 401);
         }
@@ -232,12 +242,42 @@ public class Server {
     }
 
     public void joinGame(String playerColor, String gameID, String token){
+        System.out.println("joining game...");
         AuthData authData = authService.getAuthenByToken(token);
+        System.out.println("got authdata");
         if (authData == null){
             throw new GenericException("Error: Unauthorized", 401);
         }
+        System.out.println("authData is not null");
+        if(gameID == null){
+            throw new GenericException("Error: bad request", 400);
+        }
         GameData game = gameService.getGame(gameID);
-        if(game.blackUsername()!= null && )
+        System.out.println("This is the Game: " + game);
+        System.out.println("Trying to join game as: " +playerColor);
+        if(playerColor == null){
+            throw new GenericException("Error: bad request", 400);
+        }
+        if (playerColor.equals("WHITE")){
+            if (game.whiteUsername().isEmpty()){
+                gameService.updateGame(new GameData(game.gameID(), authData.username(), game.blackUsername(), game.gameName(), game.game()), game);
+                System.out.println("joined as white");
+            }
+            else {
+                System.out.println("White already taken");
+                throw new GenericException("Error: already taken", 403);
+            }
+        }
+        if (playerColor.equals("BLACK")){
+            if (game.blackUsername().isEmpty()){
+                gameService.updateGame(new GameData(game.gameID(), game.whiteUsername(), authData.username(), game.gameName(), game.game()), game);
+                System.out.println("joined as black");
+            }
+            else {
+                System.out.println("Black already taken");
+                throw new GenericException("Error: already taken", 403);
+            }
+        }
     }
     public void clear(){
         userService.clear();

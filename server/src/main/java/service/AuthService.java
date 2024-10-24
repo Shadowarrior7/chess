@@ -19,11 +19,11 @@ public class AuthService {
     }
      public AuthData addAuth(String username){
         var token = authDao.addAuthData(username);
-        return authDao.getAuthDate(token);
+        return authDao.getAuthData(token);
      }
 
      public AuthData getAuthenByToken(String token){
-        return authDao.getAuthDate(token);
+        return authDao.getAuthData(token);
      }
 
      public void deleteAuthData(AuthData data){

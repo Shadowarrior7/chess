@@ -41,4 +41,8 @@ public class GameService {
         int gameID2 = Integer.parseInt(gameID);
         return gameDao.getGame(gameID2);
     }
+
+    public void updateGame(GameData newGame, GameData oldGame){
+        gameDao.updateGame(newGame, oldGame);
+    }
 }

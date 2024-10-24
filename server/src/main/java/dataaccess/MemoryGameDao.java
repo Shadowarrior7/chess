@@ -32,9 +32,9 @@ public class MemoryGameDao {
         return null;
     }
 
-    public void updateGame(GameData updatedGame){
+    public void updateGame(GameData updatedGame, GameData oldGame){
         for (GameData game: games){
-            if (game.equals(updatedGame)){
+            if (game.equals(oldGame)){
                 games.remove(game);
                 games.add(updatedGame);
             }

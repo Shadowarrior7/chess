@@ -42,7 +42,7 @@ public class MemoryAuthDao {
         }
     }
 
-    public AuthData getAuthDate(String authToken){
+    public AuthData getAuthData(String authToken){
         for (AuthData auth: authData){
             if (auth.authToken().equals(authToken)){
                 return auth;
