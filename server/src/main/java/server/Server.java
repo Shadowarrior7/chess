@@ -1,23 +1,15 @@
 package server;
 
-import chess.ChessGame;
 import com.google.gson.Gson;
-import com.google.gson.JsonNull;
-import com.mysql.cj.conf.ConnectionUrlParser;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import model.joinGame;
-import org.slf4j.helpers.FormattingTuple;
-import passoff.model.TestJoinRequest;
+import model.JoinGame;
 import service.AuthService;
 import service.UserService;
 import spark.*;
-import service.UserService.*;
 import service.GameService;
 
-import java.io.Reader;
-import java.rmi.registry.Registry;
 import java.util.Collection;
 import java.util.Map;
 
@@ -54,9 +46,9 @@ public class Server {
         Spark.post("/user", (request, response) ->{ //REGISTER NEW USER
             response.type("application/json");
             try{
-                UserData register_request = serializer.fromJson(request.body(), UserData.class);
+                UserData registerRequest = serializer.fromJson(request.body(), UserData.class);
                 //System.out.println(request.body());
-                var result = register(register_request);
+                var result = register(registerRequest);
                 response.status(200);
                 System.out.println("Register result: "+ result);
                 return result;
@@ -106,18 +98,18 @@ public class Server {
                 String listGamesRequest = serializer.fromJson(request.headers("Authorization"), String.class);
                 Collection<GameData> games = listGames(listGamesRequest);
                 System.out.println("games"+ games);
-                String games_json = serializer.toJson(games);
-                String new_games = "{ games: " + games_json + "}";
-                //String new_games = "{" + games_json + "}";
-                if (new_games.isEmpty()){
+                String gamesJson = serializer.toJson(games);
+                String newGames = "{ games: " + gamesJson + "}";
+                //String newGames = "{" + gamesJson + "}";
+                if (newGames.isEmpty()){
                     response.status(200);
-                    System.out.println("new_games is empty");
+                    System.out.println("newGames is empty");
                     return "{}";
                 }
-                System.out.println("games_json: " + new_games);
+                System.out.println("gamesJson: " + newGames);
 
                 response.status(200);
-                return new_games;
+                return newGames;
             } catch (GenericException e) {
                 response.status(e.code);
                 return serializer.toJson(Map.of("message", e.getMessage()));
@@ -148,7 +140,7 @@ public class Server {
             response.type("application/json");
             try {
 
-                joinGame joinGameRequest = serializer.fromJson(request.body(), joinGame.class);
+                JoinGame joinGameRequest = serializer.fromJson(request.body(), JoinGame.class);
                 if(request.headers() == null){
                     response.status(400);
                     return "{ \"message\": \"Error: bad request\" }";
