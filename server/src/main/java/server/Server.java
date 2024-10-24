@@ -189,7 +189,7 @@ public class Server {
         return serializer.toJson(result);
     }
 
-    public String login(String username, String password) {
+    public String login(String username, String password){
         var serializer = new Gson();
         UserData user = userService.getUser(username);
         if (user == null){

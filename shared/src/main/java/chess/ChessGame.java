@@ -248,7 +248,9 @@ public class ChessGame {
         }
     }
 
-    public boolean loopFunction(Collection<ChessPosition> enemyPositions, Collection<ChessMove> kingMoves, ChessPiece king, int kingSafeMoves, Collection<ChessMove> kingMovesCopy, ChessBoard newBoard) {
+    public boolean loopFunction(Collection<ChessPosition> enemyPositions, Collection<ChessMove> kingMoves,
+                                ChessPiece king, int kingSafeMoves,
+                                Collection<ChessMove> kingMovesCopy, ChessBoard newBoard) {
         for (ChessPosition enemy : enemyPositions) {
             for (ChessMove kingMove : kingMoves) {
                 if (currentBoard.getPiece(kingMove.getEndPosition()) != null) {
@@ -274,6 +276,20 @@ public class ChessGame {
             }
         }
         System.out.println(kingMovesCopy);
+        return false;
+    }
+
+    public boolean loopFunction2(Collection<ChessMove> enemyMoves, ChessMove kingMove, int kingSafeMoves, Collection<ChessMove> kingMovesCopy){
+        for (ChessMove enemyMove : enemyMoves) {
+            if (enemyMove.getEndPosition().equals(kingMove.getEndPosition())) {
+                --kingSafeMoves;
+                kingMovesCopy.remove(kingMove);
+                if (kingSafeMoves == 0) {
+                    System.out.println("in check mate");
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
