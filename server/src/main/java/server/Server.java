@@ -107,7 +107,7 @@ public class Server {
                 Collection<GameData> games = listGames(listGamesRequest);
                 System.out.println("games"+ games);
                 String games_json = serializer.toJson(games);
-                String new_games =games_json.substring(1, games_json.length()-1);
+                String new_games = "{ games: " + games_json + "}";
                 //String new_games = "{" + games_json + "}";
                 if (new_games.isEmpty()){
                     response.status(200);
@@ -133,7 +133,8 @@ public class Server {
                 System.out.println("Creating game: " + name);
                 int gameID2 = createGame(createGameRequest, name.gameName());
                 //String gameID = String.valueOf(gameID2);
-                var result = serializer.toJson(new GameData(gameID2, "", "", "", new ChessGame()));
+                //var result = serializer.toJson(new GameData(gameID2, "", "", "", new ChessGame()));
+                String result = "{ \"gameID\": " + gameID2 + " }";
                 System.out.println("\nResult: "+ result);
                 response.status(200);
                 return result;
@@ -148,7 +149,12 @@ public class Server {
             try {
 
                 joinGame joinGameRequest = serializer.fromJson(request.body(), joinGame.class);
-                String token = serializer.fromJson(request.headers("Authorization"), String.class);
+                if(request.headers() == null){
+                    response.status(400);
+                    return "{ \"message\": \"Error: bad request\" }";
+                }
+                //String token = serializer.fromJson(request.headers("Authorization"), String.class);
+                String token = request.headers("Authorization");
 
                 System.out.println("GameData: "+ joinGameRequest);
                 joinGame(joinGameRequest.playerColor(), joinGameRequest.gameID(), token);
@@ -259,8 +265,15 @@ public class Server {
             throw new GenericException("Error: bad request", 400);
         }
         if (playerColor.equals("WHITE")){
-            if (game.whiteUsername().isEmpty()){
-                gameService.updateGame(new GameData(game.gameID(), authData.username(), game.blackUsername(), game.gameName(), game.game()), game);
+            if (game.whiteUsername() == null || game.whiteUsername().isEmpty()){
+                String blackname;
+                if(game.blackUsername() == null || game.blackUsername().isEmpty()){
+                    blackname = null;
+                }
+                else{
+                    blackname = game.blackUsername();
+                }
+                gameService.updateGame(new GameData(game.gameID(), authData.username(), blackname, game.gameName(), game.game()), game);
                 System.out.println("joined as white");
             }
             else {
@@ -269,8 +282,15 @@ public class Server {
             }
         }
         if (playerColor.equals("BLACK")){
-            if (game.blackUsername().isEmpty()){
-                gameService.updateGame(new GameData(game.gameID(), game.whiteUsername(), authData.username(), game.gameName(), game.game()), game);
+            if (game.blackUsername() == null || game.blackUsername().isEmpty()){
+                String whitename;
+                if (game.whiteUsername() == null || game.whiteUsername().isEmpty()){
+                    whitename = null;
+                }
+                else {
+                    whitename = game.whiteUsername();
+                }
+                gameService.updateGame(new GameData(game.gameID(), whitename, authData.username(), game.gameName(), game.game()), game);
                 System.out.println("joined as black");
             }
             else {
