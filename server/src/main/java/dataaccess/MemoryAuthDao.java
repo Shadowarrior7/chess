@@ -19,14 +19,6 @@ public class MemoryAuthDao {
     public String addAuthData(String username){
         var authToken = generateToken();
         int userFound = 0;
-//        for (AuthData auth: authData){
-//            if (auth.username().equals(username)){
-//                authData.remove(auth);
-//                authData.add(new AuthData(authToken, username));
-//                userFound = 1;
-//                break;
-//            }
-//        }
         if(userFound == 0){
             authData.add(new AuthData(authToken, username));
         }
