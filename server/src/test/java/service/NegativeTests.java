@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import server.GenericException;
 import server.Server;
 
-public class NegitiveTests {
+public class NegativeTests {
     Server server = new Server();
 
     @Test
