@@ -48,6 +48,19 @@ public class DatabaseManager {
         }
     }
 
+    static void createTables() throws DataAccessException {
+        try {
+            var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
+            var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
+    }
+
+
     /**
      * Create a connection to the database and sets the catalog based upon the
      * properties specified in db.properties. Connections to the database should
