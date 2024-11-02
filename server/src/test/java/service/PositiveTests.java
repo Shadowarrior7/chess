@@ -13,14 +13,14 @@ public class PositiveTests {
     Server server = new Server();
 
     @Test
-    public void Register() throws DataAccessException {
+    public void register() throws DataAccessException {
         server.clear();
         String result = server.register(new UserData("username", "password", "email"));
         Assertions.assertInstanceOf(String.class, result);
     }
 
     @Test
-    public void Login() throws DataAccessException {
+    public void login() throws DataAccessException {
         server.clear();
         server.register(new UserData("username", "password", "email"));
         String result = server.login("username", "password");
