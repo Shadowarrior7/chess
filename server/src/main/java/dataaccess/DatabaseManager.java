@@ -67,7 +67,7 @@ public class DatabaseManager {
             """
             CREATE TABLE IF NOT EXISTS auth (
               `username` varchar(256) NOT NULL,
-              `token` varchar(256) NOT NULL UNIQUE
+              `token` varchar(256) NOT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
             """
     };
@@ -75,7 +75,7 @@ public class DatabaseManager {
     public static final String[] TABLE_GAME = {
             """
             CREATE TABLE IF NOT EXISTS games (
-              `game` varchar(2000) NOT NULL UNIQUE
+              `game` varchar(2000) NOT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
             """
     };
