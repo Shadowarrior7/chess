@@ -14,12 +14,14 @@ public class PositiveTests {
 
     @Test
     public void Register() throws DataAccessException {
+        server.clear();
         String result = server.register(new UserData("username", "password", "email"));
         Assertions.assertInstanceOf(String.class, result);
     }
 
     @Test
     public void Login() throws DataAccessException {
+        server.clear();
         server.register(new UserData("username", "password", "email"));
         String result = server.login("username", "password");
         Assertions.assertInstanceOf(String.class, result);
@@ -27,6 +29,7 @@ public class PositiveTests {
 
     @Test
     public void Logout() throws DataAccessException {
+        server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
         String authData= server.login("username", "password");
@@ -37,6 +40,7 @@ public class PositiveTests {
 
     @Test
     public void ListGames() throws DataAccessException {
+        server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
         String authData= server.login("username", "password");
@@ -48,6 +52,7 @@ public class PositiveTests {
 
     @Test
     public void CreateGames() throws DataAccessException {
+        server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
         String authData= server.login("username", "password");
@@ -59,6 +64,7 @@ public class PositiveTests {
 
     @Test
     public void JoinGame() throws DataAccessException {
+        server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
         String authData= server.login("username", "password");

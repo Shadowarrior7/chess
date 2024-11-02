@@ -2,6 +2,7 @@ package service;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
@@ -14,12 +15,16 @@ public class NegativeTests {
 
     @Test
     public void Register() throws DataAccessException {
+        server.clear();
         String result = server.register(new UserData("username", "password", "email"));
-        Assertions.assertInstanceOf(String.class, result);
+        Assertions.assertThrows(GenericException.class, () -> {
+            server.register(new UserData("username", "password", "email"));
+        }, "Error: already taken");
     }
 
     @Test
     public void Login() throws DataAccessException {
+        server.clear();
         server.register(new UserData("username", "password", "email"));
         Exception exception = Assertions.assertThrows(Exception.class, () -> {
             server.login("fail", "password");
@@ -30,6 +35,7 @@ public class NegativeTests {
 
     @Test
     public void Logout() throws DataAccessException {
+        server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
         String authData= server.login("username", "password");
@@ -45,6 +51,7 @@ public class NegativeTests {
 
     @Test
     public void ListGames() throws DataAccessException {
+        server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
         String authData= server.login("username", "password");
@@ -58,6 +65,7 @@ public class NegativeTests {
 
     @Test
     public void CreateGames() throws DataAccessException {
+        server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
         String authData= server.login("username", "password");
@@ -72,6 +80,7 @@ public class NegativeTests {
 
     @Test
     public void JoinGame() throws DataAccessException {
+        server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
         String authData= server.login("username", "password");
