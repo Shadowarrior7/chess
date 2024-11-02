@@ -63,7 +63,7 @@ public class DatabaseManager {
               `email` varchar(256) NOT NULL,
               INDEX(username),
               INDEX(password)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
             """
     };
 
@@ -74,7 +74,7 @@ public class DatabaseManager {
               `token` varchar(256) NOT NULL UNIQUE,
               INDEX(username),
               INDEX(token)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
             """
     };
 
@@ -83,7 +83,7 @@ public class DatabaseManager {
             CREATE TABLE IF NOT EXISTS games (
               `game` varchar(2000) NOT NULL UNIQUE,
               INDEX(game)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
             """
     };
 
