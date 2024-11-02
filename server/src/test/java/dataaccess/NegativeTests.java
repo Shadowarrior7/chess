@@ -1,23 +1,20 @@
-package DataAccess;
+package dataaccess;
 
 import chess.ChessGame;
-import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import server.Server;
 
-import javax.xml.crypto.Data;
-
-public class PositiveTests {
+public class NegativeTests {
     Server server = new Server();
     SQLGameDao gameDao = new SQLGameDao();
     SQLAuthDao authDao = new SQLAuthDao();
     SQLUserDao userDao = new SQLUserDao();
     DatabaseManager database = new DatabaseManager();
 
-    public PositiveTests() throws DataAccessException {
+    public NegativeTests() throws DataAccessException {
     }
 
     //auth
@@ -26,35 +23,28 @@ public class PositiveTests {
     public void addAuth() throws DataAccessException {
         String token = authDao.addAuthData("user");
         AuthData auth2 = authDao.getAuthData(token);
-        Assertions.assertEquals(token, auth2.authToken());
+        Assertions.assertNotEquals(token + "1", auth2.authToken());
     }
 
     @Test
     void testGenerateToken() {
         String token = SQLAuthDao.generateToken();
         Assertions.assertNotNull(token);
-        Assertions.assertFalse(token.isEmpty());
     }
 
     @Test
     void deleteAuth() throws DataAccessException {
         String token = authDao.addAuthData("user");
-        authDao.deleteAuthData(token);
+        //authDao.deleteAuthData(token);
         AuthData auth = authDao.getAuthData(token);
-        Assertions.assertNull(auth);
+        Assertions.assertNotNull(auth);
     }
 
     @Test
     void getAuth() throws DataAccessException {
         String token = authDao.addAuthData("user");
-        AuthData auth2 = authDao.getAuthData(token);
-        Assertions.assertNotNull(auth2);
-    }
-
-    @Test
-    void authClear() throws DataAccessException {
-        Assertions.assertDoesNotThrow(() -> authDao.clear(), "Clear is throwing an exception");
-
+        AuthData auth2 = authDao.getAuthData(token + "1");
+        Assertions.assertNull(auth2);
     }
     //users
     @Test
@@ -74,11 +64,6 @@ public class PositiveTests {
         Assertions.assertNotNull(userDao.getUserPassword("user"));
     }
 
-    @Test
-    void userClear(){
-        Assertions.assertDoesNotThrow(() -> userDao.clear(), "Clear is throwing an exception");
-
-    }
 
     //game
 
@@ -116,5 +101,4 @@ public class PositiveTests {
                         "user3", "name1", new ChessGame())), "Clear is throwing an exception");
 
     }
-
 }
