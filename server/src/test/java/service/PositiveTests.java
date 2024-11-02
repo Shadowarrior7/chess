@@ -1,6 +1,7 @@
 package service;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
@@ -12,20 +13,20 @@ public class PositiveTests {
     Server server = new Server();
 
     @Test
-    public void Register(){
+    public void Register() throws DataAccessException {
         String result = server.register(new UserData("username", "password", "email"));
         Assertions.assertInstanceOf(String.class, result);
     }
 
     @Test
-    public void Login(){
+    public void Login() throws DataAccessException {
         server.register(new UserData("username", "password", "email"));
         String result = server.login("username", "password");
         Assertions.assertInstanceOf(String.class, result);
     }
 
     @Test
-    public void Logout(){
+    public void Logout() throws DataAccessException {
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
         String authData= server.login("username", "password");
@@ -35,7 +36,7 @@ public class PositiveTests {
     }
 
     @Test
-    public void ListGames(){
+    public void ListGames() throws DataAccessException {
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
         String authData= server.login("username", "password");
@@ -46,7 +47,7 @@ public class PositiveTests {
     }
 
     @Test
-    public void CreateGames(){
+    public void CreateGames() throws DataAccessException {
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
         String authData= server.login("username", "password");
@@ -57,7 +58,7 @@ public class PositiveTests {
     }
 
     @Test
-    public void JoinGame(){
+    public void JoinGame() throws DataAccessException {
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
         String authData= server.login("username", "password");

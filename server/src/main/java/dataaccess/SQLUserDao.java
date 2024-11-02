@@ -7,9 +7,8 @@ import java.sql.SQLException;
 
 public class SQLUserDao {
 
-    public SQLUserDao() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        DatabaseManager.createTables();
+    public SQLUserDao() {
+
     }
 
     public  UserData getUser(String username) throws DataAccessException {
@@ -54,15 +53,13 @@ public class SQLUserDao {
     public String getUserPassword(String username) throws DataAccessException {
         String returnVal = null;
         try (var conn = DatabaseManager.getConnection()){
-            String statement = "USE chess";
-            var preStatement = conn.prepareStatement(statement);
-            preStatement.execute();
-
-            statement = "SELECT * FROM users WHERE username = ?";
+            String statement = "SELECT * FROM users WHERE username = ?";
             try(var preparedStatement = conn.prepareStatement(statement)){
                 preparedStatement.setString(1, username);
                 var result = preparedStatement.executeQuery();
-                returnVal = result.getString("password");
+                if (result.next()) {
+                    returnVal = result.getString("password");
+                }
             }
         } catch (SQLException e){
             throw new DataAccessException(e.getMessage());

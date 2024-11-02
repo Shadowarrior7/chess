@@ -1,10 +1,13 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
 import model.JoinGame;
+import org.mindrot.jbcrypt.BCrypt;
 import service.AuthService;
 import service.UserService;
 import spark.*;
@@ -18,7 +21,7 @@ public class Server {
     private GameService gameService;
     private AuthService authService;
 
-    public Server(){
+    public Server() {
         userService = new UserService();
         gameService = new GameService();
         authService = new AuthService();
@@ -172,7 +175,7 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
-    public String register(UserData registerRequest) throws GenericException {
+    public String register(UserData registerRequest) throws GenericException, DataAccessException {
         var serializer = new Gson();
         UserData user = userService.getUser(registerRequest.username());
         System.out.println("here" + user);
@@ -189,14 +192,16 @@ public class Server {
         return serializer.toJson(result);
     }
 
-    public String login(String username, String password){
+    public String login(String username, String password) throws DataAccessException {
         var serializer = new Gson();
         UserData user = userService.getUser(username);
         if (user == null){
             System.out.println("user not found");
             throw new GenericException("Error: user not found", 401);
         }
-        if(!password.equals(userService.getPassword(username))){
+
+        String pass = userService.getPassword(username);
+        if(!BCrypt.checkpw(password, pass)){
             System.out.println("password does not match");
             throw new GenericException("Error: unauthorized", 401);
         }
@@ -205,7 +210,7 @@ public class Server {
 
     }
 
-    public void logout(String token){
+    public void logout(String token) throws DataAccessException {
         System.out.println("request: "+ token);
         AuthData authData = authService.getAuthenByToken(token);
         System.out.println("logout authData: "+ authData);
@@ -215,7 +220,7 @@ public class Server {
         authService.deleteAuthData(authData);
     }
 
-    public Collection<GameData> listGames(String token){
+    public Collection<GameData> listGames(String token) throws DataAccessException {
         System.out.println("request: "+ token);
         AuthData authData = authService.getAuthenByToken(token);
         System.out.println("list games authdata: "+ authData);
@@ -225,7 +230,7 @@ public class Server {
         return gameService.getAllGames();
     }
 
-    public int createGame(String token, String name){
+    public int createGame(String token, String name) throws DataAccessException {
         System.out.println("request: "+ token);
         AuthData authData = authService.getAuthenByToken(token);
         System.out.println("create games authdata: "+ authData);
@@ -239,7 +244,7 @@ public class Server {
         return gameID;
     }
 
-    public void joinGame(String playerColor, String gameID, String token){
+    public void joinGame(String playerColor, String gameID, String token) throws DataAccessException {
         System.out.println("joining game...");
         AuthData authData = authService.getAuthenByToken(token);
         System.out.println("got authdata");
@@ -291,7 +296,7 @@ public class Server {
             }
         }
     }
-    public void clear(){
+    public void clear() throws DataAccessException {
         userService.clear();
         gameService.clear();
         authService.clear();

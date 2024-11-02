@@ -1,36 +1,38 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDao;
+import dataaccess.SQLAuthDao;
 import model.AuthData;
 
 public class AuthService {
-    public MemoryAuthDao authDao;
+    public SQLAuthDao authDao;
 
     public AuthService(){
-        authDao = new MemoryAuthDao();
+        authDao = new SQLAuthDao();
     }
 
-    public MemoryAuthDao getAuthDao(){
+    public SQLAuthDao getAuthDao(){
         return authDao;
     }
 
-    public void setAuthDao(MemoryAuthDao newAuth){
+    public void setAuthDao(SQLAuthDao newAuth){
         authDao = newAuth;
     }
-     public AuthData addAuth(String username){
+     public AuthData addAuth(String username) throws DataAccessException {
         var token = authDao.addAuthData(username);
         return authDao.getAuthData(token);
      }
 
-     public AuthData getAuthenByToken(String token){
+     public AuthData getAuthenByToken(String token) throws DataAccessException {
         return authDao.getAuthData(token);
      }
 
-     public void deleteAuthData(AuthData data){
+     public void deleteAuthData(AuthData data) throws DataAccessException {
         authDao.deleteAuthData(data.authToken());
      }
 
-     public void clear(){
+     public void clear() throws DataAccessException {
         authDao.clear();
      }
 

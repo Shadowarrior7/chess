@@ -10,19 +10,16 @@ import java.util.Collection;
 
 public class SQLGameDao {
 
-    public SQLGameDao() throws DataAccessException {
+    public SQLGameDao() {
 
     }
     //DataAccess
     public Collection<GameData> getGameDataList() throws DataAccessException {
         Collection<GameData> gamesList = new ArrayList<GameData>();
         try(var conn = DatabaseManager.getConnection()){
-            String statement = "SELECT FROM games";
+            String statement = "SELECT * FROM games";
             var preStatement = conn.prepareStatement(statement);
             var result = preStatement.executeQuery();
-            if (!result.next()){
-                return null;
-            }
             while(result.next()){
                 GameData singleGame = new Gson().fromJson(result.getString("game"), GameData.class);
                 gamesList.add(singleGame);
@@ -35,10 +32,10 @@ public class SQLGameDao {
 
     public int createGame(GameData newGame) throws DataAccessException {
         try(var conn = DatabaseManager.getConnection()) {
-            var game = new Gson().toJson(newGame, GameData.class);
-            String statement = "INSERT INTO games (game) VALUE ?";
+            var game2 = new Gson().toJson(newGame, GameData.class);
+            String statement = "INSERT INTO games (game) VALUES (?)";
             try (var preparedStatement = conn.prepareStatement(statement)){
-                preparedStatement.setString(1, game);
+                preparedStatement.setString(1, game2);
 
                 preparedStatement.executeUpdate(); // tells db that this can be excuted
             }
@@ -74,7 +71,7 @@ public class SQLGameDao {
             preStatement.setString(1, oldGameJson);
             var result = preStatement.executeQuery();
             if (!result.next()){
-                statement= "INSERT INTO games (game) VALUE ?";
+                statement= "INSERT INTO games (game) VALUES (?)";
                 var preparedStatement = conn.prepareStatement(statement);
                 preparedStatement.setString(1, updatedGameJson);
                 preparedStatement.executeUpdate();
@@ -85,7 +82,7 @@ public class SQLGameDao {
             preparedStatement.setString(1, oldGameJson);
             preparedStatement.executeUpdate();
 
-            statement= "INSERT INTO games (game) VALUE ?";
+            statement= "INSERT INTO games (game) VALUE (?)";
             var preparedStatement2 = conn.prepareStatement(statement);
             preparedStatement2.setString(1, updatedGameJson);
             preparedStatement2.executeUpdate();
