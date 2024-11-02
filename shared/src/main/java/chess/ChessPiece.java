@@ -166,7 +166,8 @@ public class ChessPiece {
                             }
                         } else if (firstMove == 2) {
                             //checks if in the starting pos
-                            if ((myPosition.getRow() == 2 && getTeamColor().equals(ChessGame.TeamColor.WHITE)) || (myPosition.getRow() == 7 && getTeamColor().equals(ChessGame.TeamColor.BLACK))) {
+                            if ((myPosition.getRow() == 2 && getTeamColor().equals(ChessGame.TeamColor.WHITE)) ||
+                                    (myPosition.getRow() == 7 && getTeamColor().equals(ChessGame.TeamColor.BLACK))) {
                                 if (board.getPiece(newPosition) != null) {
                                     break;
                                 }
