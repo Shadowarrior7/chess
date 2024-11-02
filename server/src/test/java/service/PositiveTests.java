@@ -28,7 +28,7 @@ public class PositiveTests {
     }
 
     @Test
-    public void Logout() throws DataAccessException {
+    public void logout() throws DataAccessException {
         server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
@@ -39,7 +39,7 @@ public class PositiveTests {
     }
 
     @Test
-    public void ListGames() throws DataAccessException {
+    public void listGames() throws DataAccessException {
         server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
@@ -51,7 +51,7 @@ public class PositiveTests {
     }
 
     @Test
-    public void CreateGames() throws DataAccessException {
+    public void createGames() throws DataAccessException {
         server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
@@ -63,7 +63,7 @@ public class PositiveTests {
     }
 
     @Test
-    public void JoinGame() throws DataAccessException {
+    public void joinGame() throws DataAccessException {
         server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
@@ -76,7 +76,7 @@ public class PositiveTests {
     }
 
     @Test
-    public void Clear(){
+    public void clear(){
         Assertions.assertDoesNotThrow(() -> server.clear(), "Clear is throwing an exception");
     }
 

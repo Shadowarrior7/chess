@@ -55,7 +55,7 @@ public class DatabaseManager {
         }
     }
 
-    public static final String[] tableUser = {
+    public static final String[] TABLE_USER = {
             """
             CREATE TABLE IF NOT EXISTS users (
               `username` varchar(256) NOT NULL,
@@ -67,7 +67,7 @@ public class DatabaseManager {
             """
     };
 
-    public static final String[] tableAuth = {
+    public static final String[] TABLE_AUTH = {
             """
             CREATE TABLE IF NOT EXISTS auth (
               `username` varchar(256) NOT NULL,
@@ -78,7 +78,7 @@ public class DatabaseManager {
             """
     };
 
-    public static final String[] tableGame = {
+    public static final String[] TABLE_GAME = {
             """
             CREATE TABLE IF NOT EXISTS games (
               `game` varchar(2000) NOT NULL UNIQUE,
@@ -89,17 +89,17 @@ public class DatabaseManager {
 
     static void createTables() throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : tableGame) {
+            for (var statement : TABLE_GAME) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
             }
-            for (var statement : tableUser) {
+            for (var statement : TABLE_USER) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
             }
-            for (var statement : tableAuth) {
+            for (var statement : TABLE_AUTH) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }

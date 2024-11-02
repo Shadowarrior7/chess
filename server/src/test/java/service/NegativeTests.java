@@ -14,7 +14,7 @@ public class NegativeTests {
     Server server = new Server();
 
     @Test
-    public void Register() throws DataAccessException {
+    public void register() throws DataAccessException {
         server.clear();
         String result = server.register(new UserData("username", "password", "email"));
         Assertions.assertThrows(GenericException.class, () -> {
@@ -23,7 +23,7 @@ public class NegativeTests {
     }
 
     @Test
-    public void Login() throws DataAccessException {
+    public void login() throws DataAccessException {
         server.clear();
         server.register(new UserData("username", "password", "email"));
         Exception exception = Assertions.assertThrows(Exception.class, () -> {
@@ -34,7 +34,7 @@ public class NegativeTests {
     }
 
     @Test
-    public void Logout() throws DataAccessException {
+    public void logout() throws DataAccessException {
         server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
@@ -50,7 +50,7 @@ public class NegativeTests {
     }
 
     @Test
-    public void ListGames() throws DataAccessException {
+    public void listGames() throws DataAccessException {
         server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
@@ -64,7 +64,7 @@ public class NegativeTests {
     }
 
     @Test
-    public void CreateGames() throws DataAccessException {
+    public void createGames() throws DataAccessException {
         server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
@@ -79,7 +79,7 @@ public class NegativeTests {
     }
 
     @Test
-    public void JoinGame() throws DataAccessException {
+    public void joinGame() throws DataAccessException {
         server.clear();
         var serializer = new Gson();
         server.register(new UserData("username", "password", "email"));
