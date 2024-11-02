@@ -8,9 +8,7 @@ public class DatabaseManager {
     private static final String USER;
     private static final String PASSWORD;
     private static final String CONNECTION_URL;
-
     public DatabaseManager() throws DataAccessException {
-        System.out.println("new database");
         createDatabase();
         createTables();
     }
@@ -32,7 +30,7 @@ public class DatabaseManager {
 
                 var host = props.getProperty("db.host");
                 var port = Integer.parseInt(props.getProperty("db.port"));
-                CONNECTION_URL = String.format("jdbc:mysql://%s:%d/%s", host, port, DATABASE_NAME);
+                CONNECTION_URL = String.format("jdbc:mysql://%s:%d", host, port);
             }
         } catch (Exception ex) {
             throw new RuntimeException("unable to process db.properties. " + ex.getMessage());
@@ -63,7 +61,7 @@ public class DatabaseManager {
               `email` varchar(256) NOT NULL,
               INDEX(username),
               INDEX(password)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
             """
     };
 
@@ -74,7 +72,7 @@ public class DatabaseManager {
               `token` varchar(256) NOT NULL UNIQUE,
               INDEX(username),
               INDEX(token)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
             """
     };
 
@@ -83,7 +81,7 @@ public class DatabaseManager {
             CREATE TABLE IF NOT EXISTS games (
               `game` varchar(2000) NOT NULL UNIQUE,
               INDEX(game)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
             """
     };
 

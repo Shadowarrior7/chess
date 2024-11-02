@@ -176,6 +176,7 @@ public class Server {
         Spark.awaitStop();
     }
     public String register(UserData registerRequest) throws GenericException, DataAccessException {
+        new DatabaseManager();
         var serializer = new Gson();
         UserData user = userService.getUser(registerRequest.username());
         System.out.println("here" + user);
@@ -193,6 +194,7 @@ public class Server {
     }
 
     public String login(String username, String password) throws DataAccessException {
+        new DatabaseManager();
         var serializer = new Gson();
         UserData user = userService.getUser(username);
         if (user == null){
@@ -211,6 +213,7 @@ public class Server {
     }
 
     public void logout(String token) throws DataAccessException {
+        new DatabaseManager();
         System.out.println("request: "+ token);
         AuthData authData = authService.getAuthenByToken(token);
         System.out.println("logout authData: "+ authData);
@@ -221,6 +224,7 @@ public class Server {
     }
 
     public Collection<GameData> listGames(String token) throws DataAccessException {
+        new DatabaseManager();
         System.out.println("request: "+ token);
         AuthData authData = authService.getAuthenByToken(token);
         System.out.println("list games authdata: "+ authData);
@@ -231,6 +235,7 @@ public class Server {
     }
 
     public int createGame(String token, String name) throws DataAccessException {
+        new DatabaseManager();
         System.out.println("request: "+ token);
         AuthData authData = authService.getAuthenByToken(token);
         System.out.println("create games authdata: "+ authData);
@@ -245,6 +250,7 @@ public class Server {
     }
 
     public void joinGame(String playerColor, String gameID, String token) throws DataAccessException {
+        new DatabaseManager();
         System.out.println("joining game...");
         AuthData authData = authService.getAuthenByToken(token);
         System.out.println("got authdata");
@@ -297,6 +303,7 @@ public class Server {
         }
     }
     public void clear() throws DataAccessException {
+        new DatabaseManager();
         userService.clear();
         gameService.clear();
         authService.clear();
