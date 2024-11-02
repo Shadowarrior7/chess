@@ -12,15 +12,26 @@ public class SQLUserDao {
         DatabaseManager.createTables();
     }
 
-    public  UserData getUser(String username){
-        for (UserData user: users){
-            if (user.username().equals(username)){
-                System.out.println("user found" + user+":");
-                return user;
+    public  UserData getUser(String username) throws DataAccessException {
+        String username2 = null;
+        String password = null;
+        String email = null;
+        try (var conn = DatabaseManager.getConnection()){
+            String statement = "SELECT * FROM users WHERE username = ?";
+            try(var preparedStatement = conn.prepareStatement(statement)){
+                preparedStatement.setString(1, username);
+                var result = preparedStatement.executeQuery();
+                if(!result.next()){
+                    return null;
+                }
+                username2 = result.getString("username");
+                password = result.getString("password");
+                email = result.getString("email");
             }
+        } catch (SQLException e){
+            throw new DataAccessException(e.getMessage());
         }
-        System.out.println("error finding user");
-        return null;
+        return new UserData(username2, password, email);
     }
 
     public void addUser(String username, String password, String email) throws DataAccessException {
@@ -51,7 +62,7 @@ public class SQLUserDao {
             try(var preparedStatement = conn.prepareStatement(statement)){
                 preparedStatement.setString(1, username);
                 var result = preparedStatement.executeQuery();
-                returnVal = result.getString("username");
+                returnVal = result.getString("password");
             }
         } catch (SQLException e){
             throw new DataAccessException(e.getMessage());
@@ -63,7 +74,7 @@ public class SQLUserDao {
         try(var conn = DatabaseManager.getConnection()){
             String statement = "DELETE FROM users";
             var preStatement = conn.prepareStatement(statement);
-            preStatement.execute();
+            preStatement.executeUpdate();
         } catch (SQLException e){
             throw new DataAccessException(e.getMessage());
         }
