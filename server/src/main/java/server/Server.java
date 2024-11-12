@@ -269,15 +269,8 @@ public class Server {
         }
         if (playerColor.equals("WHITE")){
             if (game.whiteUsername() == null || game.whiteUsername().isEmpty()){
-                String blackname;
-                if(game.blackUsername() == null || game.blackUsername().isEmpty()){
-                    blackname = null;
-                }
-                else{
-                    blackname = game.blackUsername();
-                }
-                gameService.updateGame(new GameData(game.gameID(), authData.username(), blackname, game.gameName(), game.game()), game);
-                System.out.println("joined as white");
+                String blackName;
+                extra(game, authData);
             }
             else {
                 System.out.println("White already taken");
@@ -286,14 +279,14 @@ public class Server {
         }
         if (playerColor.equals("BLACK")){
             if (game.blackUsername() == null || game.blackUsername().isEmpty()){
-                String whitename;
+                String whiteName;
                 if (game.whiteUsername() == null || game.whiteUsername().isEmpty()){
-                    whitename = null;
+                    whiteName = null;
                 }
                 else {
-                    whitename = game.whiteUsername();
+                    whiteName = game.whiteUsername();
                 }
-                gameService.updateGame(new GameData(game.gameID(), whitename, authData.username(), game.gameName(), game.game()), game);
+                gameService.updateGame(new GameData(game.gameID(), whiteName, authData.username(), game.gameName(), game.game()), game);
                 System.out.println("joined as black");
             }
             else {
@@ -302,6 +295,19 @@ public class Server {
             }
         }
     }
+
+    private void extra(GameData game, AuthData authData) throws DataAccessException {
+        String blackName;
+        if(game.blackUsername() == null || game.blackUsername().isEmpty()){
+            blackName = null;
+        }
+        else{
+            blackName = game.blackUsername();
+        }
+        gameService.updateGame(new GameData(game.gameID(), authData.username(), blackName, game.gameName(), game.game()), game);
+        System.out.println("joined as white");
+    }
+
     public void clear() throws DataAccessException {
         new DatabaseManager();
         userService.clear();
