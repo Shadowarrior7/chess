@@ -264,10 +264,7 @@ public class ChessGame {
                     if (enemyMove.getEndPosition().equals(kingMove.getEndPosition())) {
                         --kingSafeMoves;
                         kingMovesCopy.remove(kingMove);
-                        if (kingSafeMoves == 0) {
-                            System.out.println("in check mate");
-                            return true;
-                        }
+                        if (extract1(kingSafeMoves)) return true;
                     }
                 }
 
@@ -276,6 +273,14 @@ public class ChessGame {
             }
         }
         System.out.println(kingMovesCopy);
+        return false;
+    }
+
+    private static boolean extract1(int kingSafeMoves) {
+        if (kingSafeMoves == 0) {
+            System.out.println("in check mate");
+            return true;
+        }
         return false;
     }
 
