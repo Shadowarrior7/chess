@@ -53,7 +53,7 @@ public class NegativeTests {
     @Test
     void getUser() throws DataAccessException {
         userDao.addUser("user", "password", "email");
-        Assertions.assertNotNull(userDao.getUser("user"));
+        Assertions.assertNull(userDao.getUser("user1"));
     }
 
     @Test
