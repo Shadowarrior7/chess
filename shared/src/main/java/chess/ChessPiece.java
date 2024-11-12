@@ -79,7 +79,8 @@ public class ChessPiece {
         throw new RuntimeException("pieceMoves");
     }
 
-    public Collection<ChessMove> checkForMoves(int[][] possibilities, ChessBoard board, ChessPosition myPosition, Boolean iterative) {
+    public Collection<ChessMove> checkForMoves(int[][] possibilities, ChessBoard board,
+                                               ChessPosition myPosition, Boolean iterative) {
         Collection<ChessMove> moves = new ArrayList<>();
         ChessGame.TeamColor myColor = getTeamColor();
 

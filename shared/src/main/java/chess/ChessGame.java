@@ -279,20 +279,6 @@ public class ChessGame {
         return false;
     }
 
-    public boolean loopFunction2(Collection<ChessMove> enemyMoves, ChessMove kingMove, int kingSafeMoves, Collection<ChessMove> kingMovesCopy){
-        for (ChessMove enemyMove : enemyMoves) {
-            if (enemyMove.getEndPosition().equals(kingMove.getEndPosition())) {
-                --kingSafeMoves;
-                kingMovesCopy.remove(kingMove);
-                if (kingSafeMoves == 0) {
-                    System.out.println("in check mate");
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     /**
      * Determines if the given team is in stalemate, which here is defined as having
      * no valid moves

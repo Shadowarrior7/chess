@@ -34,32 +34,9 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         //make a db endpoint
         var serializer = new Gson();
-        Spark.delete("/db", (request, response) -> { //CLEAR APPLICATION
-            response.type("application/json");
-            try {
-                clear();
-                response.status(200);
-                return "{}";
-            } catch (Exception e) {
-                response.status(500);
-                return "{ message: Error: (" + e.getMessage() + ") }";
-            }
-        });
+        SparkDelete();
 
-        Spark.post("/user", (request, response) ->{ //REGISTER NEW USER
-            response.type("application/json");
-            try{
-                UserData registerRequest = serializer.fromJson(request.body(), UserData.class);
-                //System.out.println(request.body());
-                var result = register(registerRequest);
-                response.status(200);
-                System.out.println("Register result: "+ result);
-                return result;
-            }catch (GenericException e){
-                response.status(e.code);
-                return serializer.toJson(Map.of("message", e.getMessage()));
-            }
-        });
+        SparkPost(serializer);
 
         Spark.post("/session", (request, response) -> { //LOGIN
             response.type("application/json");
@@ -169,6 +146,37 @@ public class Server {
 
         Spark.awaitInitialization();
         return Spark.port();
+    }
+
+    private void SparkPost(Gson serializer) {
+        Spark.post("/user", (request, response) ->{ //REGISTER NEW USER
+            response.type("application/json");
+            try{
+                UserData registerRequest = serializer.fromJson(request.body(), UserData.class);
+                //System.out.println(request.body());
+                var result = register(registerRequest);
+                response.status(200);
+                System.out.println("Register result: "+ result);
+                return result;
+            }catch (GenericException e){
+                response.status(e.code);
+                return serializer.toJson(Map.of("message", e.getMessage()));
+            }
+        });
+    }
+
+    private void SparkDelete() {
+        Spark.delete("/db", (request, response) -> { //CLEAR APPLICATION
+            response.type("application/json");
+            try {
+                clear();
+                response.status(200);
+                return "{}";
+            } catch (Exception e) {
+                response.status(500);
+                return "{ message: Error: (" + e.getMessage() + ") }";
+            }
+        });
     }
 
     public void stop() {

@@ -88,12 +88,12 @@ public class NegativeTests {
         gameDao.clear();
         gameDao.createGame(new GameData(123, "user",
                 "user2", "name", new ChessGame()));
-        Assertions.assertNotNull(gameDao.getGame(123));
+        Assertions.assertNull(gameDao.getGame(124));
         gameDao.clear();
     }
 
     @Test
-    void updateGame() throws DataAccessException {
+    void updateGame2() throws DataAccessException {
 
         Assertions.assertDoesNotThrow(() -> gameDao.updateGame(new GameData(123, "user",
                         "user2", "name", new ChessGame()),
