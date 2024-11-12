@@ -84,7 +84,7 @@ public class ChessPiece {
         Collection<ChessMove> moves = new ArrayList<>();
         ChessGame.TeamColor myColor = getTeamColor();
 
-        if (iterative) {
+        if (getIterative(iterative)) {
             for (int[] move : possibilities) {
                 //set cord for current position
                 int currentRow = myPosition.getRow();
@@ -125,7 +125,7 @@ public class ChessPiece {
                     moves.add(moveToAdd);
                 }
             }
-        } else if (!iterative) {
+        } else {
             if (getPieceType().equals(PieceType.PAWN)) {
                 int firstMove = 0;
                 PieceType promotion = null;
@@ -148,22 +148,7 @@ public class ChessPiece {
                             if (board.getPiece(newPosition) != null) {
                                 break;
                             } else {
-                                if (currentRow == 1 || currentRow == 8) {
-                                    promotion = PieceType.QUEEN;
-                                    moves.add(new ChessMove(myPosition, newPosition, promotion));
-                                    promotion = PieceType.ROOK;
-                                    moves.add(new ChessMove(myPosition, newPosition, promotion));
-                                    promotion = PieceType.BISHOP;
-                                    moves.add(new ChessMove(myPosition, newPosition, promotion));
-                                    promotion = PieceType.KNIGHT;
-                                    moves.add(new ChessMove(myPosition, newPosition, promotion));
-                                    promotion = null;
-                                    break;
-                                } else {
-                                    ChessMove moveToAdd = new ChessMove(myPosition, newPosition, promotion);
-                                    moves.add(moveToAdd);
-                                    break;
-                                }
+                                promotion = getPieceType(myPosition, moves, promotion, currentRow, newPosition);
                             }
                         } else if (firstMove == 2) {
                             //checks if in the starting pos
@@ -187,43 +172,14 @@ public class ChessPiece {
                                     }
                                 }
 
-                                if (currentRow == 1 || currentRow == 8) {
-                                    promotion = PieceType.QUEEN;
-                                    moves.add(new ChessMove(myPosition, newPosition, promotion));
-                                    promotion = PieceType.ROOK;
-                                    moves.add(new ChessMove(myPosition, newPosition, promotion));
-                                    promotion = PieceType.BISHOP;
-                                    moves.add(new ChessMove(myPosition, newPosition, promotion));
-                                    promotion = PieceType.KNIGHT;
-                                    moves.add(new ChessMove(myPosition, newPosition, promotion));
-                                    promotion = null;
-                                    break;
-                                } else {
-                                    ChessMove moveToAdd = new ChessMove(myPosition, newPosition, promotion);
-                                    moves.add(moveToAdd);
-                                    break;
-                                }
+                                promotion = getPieceType(myPosition, moves, promotion, currentRow, newPosition);
+                                break;
                             }
 
                         } else {
                             if (board.getPiece(newPosition) != null) {
                                 if (!board.getPiece(newPosition).getTeamColor().equals(myColor)) {
-                                    if (currentRow == 1 || currentRow == 8) {
-                                        promotion = PieceType.QUEEN;
-                                        moves.add(new ChessMove(myPosition, newPosition, promotion));
-                                        promotion = PieceType.ROOK;
-                                        moves.add(new ChessMove(myPosition, newPosition, promotion));
-                                        promotion = PieceType.BISHOP;
-                                        moves.add(new ChessMove(myPosition, newPosition, promotion));
-                                        promotion = PieceType.KNIGHT;
-                                        moves.add(new ChessMove(myPosition, newPosition, promotion));
-                                        promotion = null;
-                                        break;
-                                    } else {
-                                        ChessMove moveToAdd = new ChessMove(myPosition, newPosition, promotion);
-                                        moves.add(moveToAdd);
-                                        break;
-                                    }
+                                    promotion = getPieceType(myPosition, moves, promotion, currentRow, newPosition);
                                 }
                             }
                         }
@@ -234,9 +190,8 @@ public class ChessPiece {
             } else {
                 for (int[] move : possibilities) {
                     while (true) {
-                        int currentRow = myPosition.getRow();
                         int currentColumn = myPosition.getColumn();
-                        currentRow += move[0];
+                        int currentRow = myPosition.getRow() + move[0];
                         currentColumn += move[1];
                         if (currentRow < 1 || currentRow > 8 || currentColumn < 1 || currentColumn > 8) {
                             break;
@@ -259,10 +214,32 @@ public class ChessPiece {
                     }
                 }
             }
-        } else {
-            throw new RuntimeException("check_for_moves");
         }
         return moves;
+    }
+
+    private static Boolean getIterative(Boolean iterative) {
+        return iterative;
+    }
+
+    public PieceType getPieceType(ChessPosition myPosition, Collection<ChessMove> moves, PieceType promotion, int currentRow, ChessPosition newPosition) {
+        if (currentRow == 1 || currentRow == 8) {
+            promotion = PieceType.QUEEN;
+            moves.add(new ChessMove(myPosition, newPosition, promotion));
+            promotion = PieceType.ROOK;
+            moves.add(new ChessMove(myPosition, newPosition, promotion));
+            promotion = PieceType.BISHOP;
+            moves.add(new ChessMove(myPosition, newPosition, promotion));
+            promotion = PieceType.KNIGHT;
+            moves.add(new ChessMove(myPosition, newPosition, promotion));
+            promotion = null;
+            return promotion;
+        } else {
+            ChessMove moveToAdd = new ChessMove(myPosition, newPosition, promotion);
+            moves.add(moveToAdd);
+            return promotion;
+        }
+        //return promotion;
     }
 
     @Override

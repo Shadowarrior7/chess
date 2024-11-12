@@ -34,43 +34,13 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         //make a db endpoint
         var serializer = new Gson();
-        SparkDelete();
+        sparkDelete();
 
-        SparkPost(serializer);
+        sparkPost(serializer);
 
-        Spark.post("/session", (request, response) -> { //LOGIN
-            response.type("application/json");
-            try {
-                UserData loginRequest = serializer.fromJson(request.body(), UserData.class);
-                //System.out.println(loginRequest);
-                String result = login(loginRequest.username(), loginRequest.password());
-                response.status(200);
-                System.out.println("success");
-                return result;
-            } catch (GenericException e) {
-                System.out.println("error here in login");
-                response.status(e.code);
-                System.out.println("error: " + e);
-                var json = serializer.toJson(Map.of("message", e.getMessage()));
-                System.out.println("login error: "+ json);
-                return json;
-            }
-        });
+        sparkPost2(serializer);
 
-        Spark.delete("/session", (request, response) -> { //LOGOUT
-            response.type("application/json");
-            try {
-                System.out.println("og request: " + request.headers("Authorization"));
-                String logoutRequest = serializer.fromJson(request.headers("Authorization"), String.class);
-                System.out.println("logout: "+ logoutRequest);
-                logout(logoutRequest);
-                response.status(200);
-                return "{}";
-            } catch (GenericException e) {
-                response.status(e.code);
-                return serializer.toJson(Map.of("message", e.getMessage()));
-            }
-        });
+        sparkDelete(serializer);
 
         Spark.get("/game", (request, response) -> { //LIST GAMES
             response.type("application/json");
@@ -148,7 +118,45 @@ public class Server {
         return Spark.port();
     }
 
-    private void SparkPost(Gson serializer) {
+    private void sparkDelete(Gson serializer) {
+        Spark.delete("/session", (request, response) -> { //LOGOUT
+            response.type("application/json");
+            try {
+                System.out.println("og request: " + request.headers("Authorization"));
+                String logoutRequest = serializer.fromJson(request.headers("Authorization"), String.class);
+                System.out.println("logout: "+ logoutRequest);
+                logout(logoutRequest);
+                response.status(200);
+                return "{}";
+            } catch (GenericException e) {
+                response.status(e.code);
+                return serializer.toJson(Map.of("message", e.getMessage()));
+            }
+        });
+    }
+
+    private void sparkPost2(Gson serializer) {
+        Spark.post("/session", (request, response) -> { //LOGIN
+            response.type("application/json");
+            try {
+                UserData loginRequest = serializer.fromJson(request.body(), UserData.class);
+                //System.out.println(loginRequest);
+                String result = login(loginRequest.username(), loginRequest.password());
+                response.status(200);
+                System.out.println("success");
+                return result;
+            } catch (GenericException e) {
+                System.out.println("error here in login");
+                response.status(e.code);
+                System.out.println("error: " + e);
+                var json = serializer.toJson(Map.of("message", e.getMessage()));
+                System.out.println("login error: "+ json);
+                return json;
+            }
+        });
+    }
+
+    private void sparkPost(Gson serializer) {
         Spark.post("/user", (request, response) ->{ //REGISTER NEW USER
             response.type("application/json");
             try{
@@ -165,7 +173,7 @@ public class Server {
         });
     }
 
-    private void SparkDelete() {
+    private void sparkDelete() {
         Spark.delete("/db", (request, response) -> { //CLEAR APPLICATION
             response.type("application/json");
             try {

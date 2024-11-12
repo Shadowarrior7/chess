@@ -94,11 +94,10 @@ public class NegativeTests {
 
     @Test
     void updateGame2() throws DataAccessException {
-
-        Assertions.assertDoesNotThrow(() -> gameDao.updateGame(new GameData(123, "user",
-                        "user2", "name", new ChessGame()),
+        Assertions.assertDoesNotThrow(() -> gameDao.updateGame(new GameData(12323423, "user",
+                        "user8", "name", new ChessGame()),
                 new GameData(1234, "user",
-                        "user3", "name1", new ChessGame())), "Clear is throwing an exception");
+                        "user23", "name1", new ChessGame())), "Clear is throwing an exception");
 
     }
 }
