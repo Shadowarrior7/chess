@@ -125,7 +125,8 @@ public class ChessPiece {
         return moves;
     }
 
-    private static void extract3(int[][] possibilities, ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor, Collection<ChessMove> moves) {
+    private static void extract3(int[][] possibilities, ChessBoard board,
+                                 ChessPosition myPosition, ChessGame.TeamColor myColor, Collection<ChessMove> moves) {
         for (int[] move : possibilities) {
             while (true) {
                 int currentColumn = myPosition.getColumn();
@@ -135,17 +136,7 @@ public class ChessPiece {
                     break;
                 }
                 ChessPosition newPosition = new ChessPosition(currentRow, currentColumn);
-                if (board.getPiece(newPosition) != null) {
-                    ChessGame.TeamColor piece = board.getPiece(newPosition).getTeamColor();
-                    if (piece.equals(myColor)) {
-                        break;
-                    } else {
-                        ChessMove moveToAdd = new ChessMove(myPosition, newPosition, null);
-                        moves.add(moveToAdd);
-                        break;
-                    }
-
-                }
+                if (extracted2(board, myPosition, myColor, moves, newPosition)) break;
                 ChessMove moveToAdd = new ChessMove(myPosition, newPosition, null);
                 moves.add(moveToAdd);
                 break;
@@ -153,7 +144,23 @@ public class ChessPiece {
         }
     }
 
-    private void extract2(int[][] possibilities, ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves, ChessGame.TeamColor myColor) {
+    private static boolean extracted2(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor, Collection<ChessMove> moves, ChessPosition newPosition) {
+        if (board.getPiece(newPosition) != null) {
+            ChessGame.TeamColor piece = board.getPiece(newPosition).getTeamColor();
+            if (piece.equals(myColor)) {
+                return true;
+            } else {
+                ChessMove moveToAdd = new ChessMove(myPosition, newPosition, null);
+                moves.add(moveToAdd);
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+    private void extract2(int[][] possibilities, ChessBoard board, ChessPosition myPosition,
+                          Collection<ChessMove> moves, ChessGame.TeamColor myColor) {
         int firstMove = 0;
         PieceType promotion = null;
         for (int[] move : possibilities) {
@@ -171,51 +178,64 @@ public class ChessPiece {
                 }
 
                 ChessPosition newPosition = new ChessPosition(currentRow, currentColumn);
-                if (firstMove == 1) {
-                    if (board.getPiece(newPosition) != null) {
-                        break;
-                    } else {
-                        promotion = getPieceType(myPosition, moves, promotion, currentRow, newPosition);
-                    }
-                } else if (firstMove == 2) {
-                    //checks if in the starting pos
-                    if ((myPosition.getRow() == 2 && getTeamColor().equals(ChessGame.TeamColor.WHITE)) ||
-                            (myPosition.getRow() == 7 && getTeamColor().equals(ChessGame.TeamColor.BLACK))) {
-                        if (board.getPiece(newPosition) != null) {
-                            break;
-                        }
-
-                        if (getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
-                            ChessPosition secondCheck = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn());
-                            if (board.getPiece(secondCheck) != null) {
-                                System.out.println("white pawn cannot double jump");
-                                break;
-                            }
-                        } else if (getTeamColor().equals(ChessGame.TeamColor.BLACK)) {
-                            ChessPosition secondCheck = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
-                            if (board.getPiece(secondCheck) != null) {
-                                System.out.println("black pawn cannot double jump");
-                                break;
-                            }
-                        }
-
-                        promotion = getPieceType(myPosition, moves, promotion, currentRow, newPosition);
-                        break;
-                    }
-
-                } else {
-                    if (board.getPiece(newPosition) != null) {
-                        if (!board.getPiece(newPosition).getTeamColor().equals(myColor)) {
-                            promotion = getPieceType(myPosition, moves, promotion, currentRow, newPosition);
-                        }
-                    }
-                }
+                promotion = getPieceType(board, myPosition, moves, myColor, firstMove, newPosition, promotion, currentRow);
                 break;
             }
         }
     }
 
-    private static void extract1(ChessBoard board, ChessPosition myPosition, ChessPosition newPosition, ChessGame.TeamColor myColor, Collection<ChessMove> moves) {
+    private PieceType getPieceType(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves, ChessGame.TeamColor myColor, int firstMove, ChessPosition newPosition, PieceType promotion, int currentRow) {
+        if (firstMove == 1) {
+            if (board.getPiece(newPosition) != null) {
+                return promotion;
+            } else {
+                promotion = getPieceType(myPosition, moves, promotion, currentRow, newPosition);
+            }
+        } else if (firstMove == 2) {
+            //checks if in the starting pos
+            if ((myPosition.getRow() == 2 && getTeamColor().equals(ChessGame.TeamColor.WHITE)) ||
+                    (myPosition.getRow() == 7 && getTeamColor().equals(ChessGame.TeamColor.BLACK))) {
+                promotion = getPieceType(board, myPosition, moves, newPosition, promotion, currentRow);
+                return promotion;
+            }
+
+        } else {
+            if (board.getPiece(newPosition) != null) {
+                if (!board.getPiece(newPosition).getTeamColor().equals(myColor)) {
+                    promotion = getPieceType(myPosition, moves, promotion, currentRow, newPosition);
+                }
+            }
+        }
+        return promotion;
+    }
+
+    private PieceType getPieceType(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves, ChessPosition newPosition, PieceType promotion, int currentRow) {
+        if (board.getPiece(newPosition) != null) {
+            return promotion;
+        }
+
+        if (getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
+            ChessPosition secondCheck = new ChessPosition(myPosition.getRow() + 1,
+                    myPosition.getColumn());
+            if (board.getPiece(secondCheck) != null) {
+                System.out.println("white pawn cannot double jump");
+                return promotion;
+            }
+        } else if (getTeamColor().equals(ChessGame.TeamColor.BLACK)) {
+            ChessPosition secondCheck = new ChessPosition(myPosition.getRow() - 1,
+                    myPosition.getColumn());
+            if (board.getPiece(secondCheck) != null) {
+                System.out.println("black pawn cannot double jump");
+                return promotion;
+            }
+        }
+
+        promotion = getPieceType(myPosition, moves, promotion, currentRow, newPosition);
+        return promotion;
+    }
+
+    private static void extract1(ChessBoard board, ChessPosition myPosition,
+                                 ChessPosition newPosition, ChessGame.TeamColor myColor, Collection<ChessMove> moves) {
         System.out.println("piece there");
         ChessGame.TeamColor pieceColor = board.getPiece(newPosition).getTeamColor();
         //checks if you can take the piece
@@ -235,7 +255,8 @@ public class ChessPiece {
         return iterative;
     }
 
-    public PieceType getPieceType(ChessPosition myPosition, Collection<ChessMove> moves, PieceType promotion, int currentRow, ChessPosition newPosition) {
+    public PieceType getPieceType(ChessPosition myPosition, Collection<ChessMove> moves,
+                                  PieceType promotion, int currentRow, ChessPosition newPosition) {
         if (currentRow == 1 || currentRow == 8) {
             promotion = PieceType.QUEEN;
             moves.add(new ChessMove(myPosition, newPosition, promotion));

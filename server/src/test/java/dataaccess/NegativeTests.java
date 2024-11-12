@@ -46,6 +46,7 @@ public class NegativeTests {
         AuthData auth2 = authDao.getAuthData(token + "1");
         Assertions.assertNull(auth2);
     }
+
     //users
     @Test
     void getUser() throws DataAccessException {
