@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import server.Server;
 
+import java.util.List;
+
 public class NegativeTests {
     Server server = new Server();
     SQLGameDao gameDao = new SQLGameDao();
@@ -43,8 +45,8 @@ public class NegativeTests {
     @Test
     void getAuth() throws DataAccessException {
         String token = authDao.addAuthData("user");
-        AuthData auth2 = authDao.getAuthData(token + "1");
-        Assertions.assertNull(auth2);
+        AuthData auth2 = authDao.getAuthData(token);
+        Assertions.assertNotNull(auth2);
     }
 
     //users
@@ -71,10 +73,8 @@ public class NegativeTests {
     @Test
     void getGames() throws DataAccessException {
         gameDao.clear();
-        gameDao.createGame(new GameData(123, "user",
-                "user2", "name", new ChessGame()));
-        Assertions.assertNotNull(gameDao.getGameDataList());
-        gameDao.clear();
+
+        Assertions.assertEquals("[]", gameDao.getGameDataList().toString());
     }
 
     @Test

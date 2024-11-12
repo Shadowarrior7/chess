@@ -264,7 +264,9 @@ public class ChessGame {
                     if (enemyMove.getEndPosition().equals(kingMove.getEndPosition())) {
                         --kingSafeMoves;
                         kingMovesCopy.remove(kingMove);
-                        if (extract1(kingSafeMoves)) return true;
+                        if (extract1(kingSafeMoves)) {
+                            return true;
+                        }
                     }
                 }
 

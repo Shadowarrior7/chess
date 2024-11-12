@@ -136,7 +136,9 @@ public class ChessPiece {
                     break;
                 }
                 ChessPosition newPosition = new ChessPosition(currentRow, currentColumn);
-                if (extracted2(board, myPosition, myColor, moves, newPosition)) break;
+                if (extracted2(board, myPosition, myColor, moves, newPosition)){
+                    break;
+                }
                 ChessMove moveToAdd = new ChessMove(myPosition, newPosition, null);
                 moves.add(moveToAdd);
                 break;
@@ -144,7 +146,8 @@ public class ChessPiece {
         }
     }
 
-    private static boolean extracted2(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor, Collection<ChessMove> moves, ChessPosition newPosition) {
+    private static boolean extracted2(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor myColor,
+                                      Collection<ChessMove> moves, ChessPosition newPosition) {
         if (board.getPiece(newPosition) != null) {
             ChessGame.TeamColor piece = board.getPiece(newPosition).getTeamColor();
             if (piece.equals(myColor)) {
@@ -184,7 +187,9 @@ public class ChessPiece {
         }
     }
 
-    private PieceType getPieceType(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves, ChessGame.TeamColor myColor, int firstMove, ChessPosition newPosition, PieceType promotion, int currentRow) {
+    private PieceType getPieceType(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves,
+                                   ChessGame.TeamColor myColor, int firstMove, ChessPosition newPosition,
+                                   PieceType promotion, int currentRow) {
         if (firstMove == 1) {
             if (board.getPiece(newPosition) != null) {
                 return promotion;
@@ -209,7 +214,8 @@ public class ChessPiece {
         return promotion;
     }
 
-    private PieceType getPieceType(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves, ChessPosition newPosition, PieceType promotion, int currentRow) {
+    private PieceType getPieceType(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> moves,
+                                   ChessPosition newPosition, PieceType promotion, int currentRow) {
         if (board.getPiece(newPosition) != null) {
             return promotion;
         }
