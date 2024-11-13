@@ -293,6 +293,37 @@ public class ChessGame {
      * @param teamColor which team to check for stalemate
      * @return True if the specified team is in stalemate, otherwise false
      */
+
+//      public boolean isInStalemate(TeamColor teamColor){
+//          if(isInCheck(teamColor) || isInCheckmate(teamColor)){
+//              return false;
+//          }
+//          ChessPosition myKingPos = getKingPosition(teamColor);
+//          if (myKingPos == null) {
+//              System.out.println("Big problem");
+//              return false;
+//          }
+//          Collection<ChessPosition> enemyPositions = getEnemyPositions(teamColor);
+//          ChessPiece kingPiece = currentBoard.getPiece(myKingPos);
+//          Collection<ChessMove> kingMoves = kingPiece.pieceMoves(getBoard(), myKingPos);
+//          for(ChessMove kingMove : kingMoves){
+//              for (ChessPosition enemy : enemyPositions) {
+//                  ChessPiece enemyPiece = currentBoard.getPiece(enemy);
+//                  Collection<ChessMove> enemyMoves = enemyPiece.pieceMoves(currentBoard, enemy);
+//                  for (ChessMove enemyMove : enemyMoves) {
+//                      if (enemyMove.getEndPosition().equals(kingMove.getEndPosition())){
+//
+//                      }
+//                  }
+//              }
+//
+//
+//
+//          }
+//
+//      }
+
+
     public boolean isInStalemate(TeamColor teamColor) {
         ChessPosition myKingPos = getKingPosition(teamColor);
         if (myKingPos == null) {
@@ -310,6 +341,7 @@ public class ChessGame {
                 for (ChessMove kingMove : kingMoves) {
                     if (enemyMove.getEndPosition().equals(kingMove.getEndPosition())) {
                         --kingSafeMoves;
+                        System.out.println("king safe moves: "+ kingSafeMoves);
                         if (kingSafeMoves == 0) {
                             System.out.println("in stale mate");
                             return true;
