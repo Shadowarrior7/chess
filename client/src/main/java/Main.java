@@ -201,7 +201,7 @@ public class Main {
 
     public static void game(String[] args){
         printBoard(gameIDG);
-        System.out.println("You are in game: "+ gameIDG);
+        System.out.println("You are in a game");
         Scanner scanner = new Scanner(System.in);
         boolean loop = true;
         while (loop){
