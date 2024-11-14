@@ -1,6 +1,6 @@
 import chess.*;
 import ui.*;
-import model.AuthData;
+
 import model.GameData;
 import model.JoinGame;
 import model.UserData;
@@ -114,9 +114,9 @@ public class Main {
             }
             if(input.toLowerCase(Locale.ROOT).equals("list")){
                 try{
-                    System.out.println("not here");
+                    //System.out.println("not here");
                     Collection<GameData> games = serverFacade.listGames(token);
-                    System.out.println("here?");
+                    //System.out.println("here?");
                     listGames(games);
                 }catch (Exception e){
                     System.out.println(e.getMessage());
@@ -218,32 +218,102 @@ public class Main {
             String white = EscapeSequences.SET_BG_COLOR_WHITE;
 
             if(color.equals("BLACK")) {
-                System.out.println("\n" + EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.SET_TEXT_BOLD + "  a  b  c  d  e  f  g  h  " + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "1" + black + helper(1, 1, theBoard) + white + helper(1, 2, theBoard) + black + helper(1, 3, theBoard) + white + helper(1, 4, theBoard) + black + helper(1, 5, theBoard) + white + helper(1, 6, theBoard) + black + helper(1, 7, theBoard) + white + helper(1, 8, theBoard) + blue + "1" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "2" + white + helper(2, 1, theBoard) + black + helper(2, 2, theBoard) + white + helper(2, 3, theBoard) + black + helper(2, 4, theBoard) + white + helper(2, 5, theBoard) + black + helper(2, 6, theBoard) + white + helper(2, 7, theBoard) + black + helper(2, 8, theBoard) + blue + "2" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "3" + black + helper(3, 1, theBoard) + white + helper(3, 2, theBoard) + black + helper(3, 3, theBoard) + white + helper(3, 4, theBoard) + black + helper(3, 5, theBoard) + white + helper(3, 6, theBoard) + black + helper(3, 7, theBoard) + white + helper(3, 8, theBoard) + blue + "3" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "4" + white + helper(4, 1, theBoard) + black + helper(4, 2, theBoard) + white + helper(4, 3, theBoard) + black + helper(4, 4, theBoard) + white + helper(4, 5, theBoard) + black + helper(4, 6, theBoard) + white + helper(4, 7, theBoard) + black + helper(4, 8, theBoard) + blue + "4" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "5" + black + helper(5, 1, theBoard) + white + helper(5, 2, theBoard) + black + helper(5, 3, theBoard) + white + helper(5, 4, theBoard) + black + helper(5, 5, theBoard) + white + helper(5, 6, theBoard) + black + helper(5, 7, theBoard) + white + helper(5, 8, theBoard) + blue + "5" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "6" + white + helper(6, 1, theBoard) + black + helper(6, 2, theBoard) + white + helper(6, 3, theBoard) + black + helper(6, 4, theBoard) + white + helper(6, 5, theBoard) + black + helper(6, 6, theBoard) + white + helper(6, 7, theBoard) + black + helper(6, 8, theBoard) + blue + "6" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "7" + black + helper(7, 1, theBoard) + white + helper(7, 2, theBoard) + black + helper(7, 3, theBoard) + white + helper(7, 4, theBoard) + black + helper(7, 5, theBoard) + white + helper(7, 6, theBoard) + black + helper(7, 7, theBoard) + white + helper(7, 8, theBoard) + blue + "7" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "8" + white + helper(8, 1, theBoard) + black + helper(8, 2, theBoard) + white + helper(8, 3, theBoard) + black + helper(8, 4, theBoard) + white + helper(8, 5, theBoard) + black + helper(8, 6, theBoard) + white + helper(8, 7, theBoard) + black + helper(8, 8, theBoard) + blue + "8" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.SET_TEXT_BOLD + "  a  b  c  d  e  f  g  h  " + EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR);
+                System.out.println("\n" + EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK +
+                        EscapeSequences.SET_TEXT_BOLD + "  a  b  c  d  e  f  g  h  " + EscapeSequences.RESET_BG_COLOR);
+                board1(theBoard, blue, white, black);
+                board2(theBoard, blue, white, black);
+                board3(theBoard, blue, white, black);
+                board4(theBoard, blue, white, black);
+                board5(theBoard, blue, white, black);
+                board6(theBoard, blue, white, black);
+                board7(theBoard, blue, white, black);
+                board8(theBoard, blue, white, black);
+                System.out.println(EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK +
+                        EscapeSequences.SET_TEXT_BOLD + "  a  b  c  d  e  f  g  h  " + EscapeSequences.RESET_BG_COLOR +
+                        EscapeSequences.RESET_TEXT_COLOR);
             }
             else {
-                System.out.println("\n" + EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.SET_TEXT_BOLD + "  h  g  f  e  d  c  b  a  " + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "8" + black + helper(8, 1, theBoard) + white + helper(8, 2, theBoard) + black + helper(8, 3, theBoard) + white + helper(8, 4, theBoard) + black + helper(8, 5, theBoard) + white + helper(8, 6, theBoard) + black + helper(8, 7, theBoard) + white + helper(8, 8, theBoard) + blue + "8" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "7" + white + helper(7, 1, theBoard) + black + helper(7, 2, theBoard) + white + helper(7, 3, theBoard) + black + helper(7, 4, theBoard) + white + helper(7, 5, theBoard) + black + helper(7, 6, theBoard) + white + helper(7, 7, theBoard) + black + helper(7, 8, theBoard) + blue + "7" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "6" + black + helper(6, 1, theBoard) + white + helper(6, 2, theBoard) + black + helper(6, 3, theBoard) + white + helper(6, 4, theBoard) + black + helper(6, 5, theBoard) + white + helper(6, 6, theBoard) + black + helper(6, 7, theBoard) + white + helper(6, 8, theBoard) + blue + "6" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "5" + white + helper(5, 1, theBoard) + black + helper(5, 2, theBoard) + white + helper(5, 3, theBoard) + black + helper(5, 4, theBoard) + white + helper(5, 5, theBoard) + black + helper(5, 6, theBoard) + white + helper(5, 7, theBoard) + black + helper(5, 8, theBoard) + blue + "5" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "4" + black + helper(4, 1, theBoard) + white + helper(4, 2, theBoard) + black + helper(4, 3, theBoard) + white + helper(4, 4, theBoard) + black + helper(4, 5, theBoard) + white + helper(4, 6, theBoard) + black + helper(4, 7, theBoard) + white + helper(4, 8, theBoard) + blue + "4" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "3" + white + helper(3, 1, theBoard) + black + helper(3, 2, theBoard) + white + helper(3, 3, theBoard) + black + helper(3, 4, theBoard) + white + helper(3, 5, theBoard) + black + helper(3, 6, theBoard) + white + helper(3, 7, theBoard) + black + helper(3, 8, theBoard) + blue + "3" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "2" + black + helper(2, 1, theBoard) + white + helper(2, 2, theBoard) + black + helper(2, 3, theBoard) + white + helper(2, 4, theBoard) + black + helper(2, 5, theBoard) + white + helper(2, 6, theBoard) + black + helper(2, 7, theBoard) + white + helper(2, 8, theBoard) + blue + "2" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(blue + "1" + white + helper(1, 1, theBoard) + black + helper(1, 2, theBoard) + white + helper(1, 3, theBoard) + black + helper(1, 4, theBoard) + white + helper(1, 5, theBoard) + black + helper(1, 6, theBoard) + white + helper(1, 7, theBoard) + black + helper(1, 8, theBoard) + blue + "1" + EscapeSequences.RESET_BG_COLOR);
-                System.out.println(EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK + EscapeSequences.SET_TEXT_BOLD + "  h  g  f  e  d  c  b  a  " + EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR);
+                System.out.println("\n" + EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK +
+                        EscapeSequences.SET_TEXT_BOLD + "  h  g  f  e  d  c  b  a  " + EscapeSequences.RESET_BG_COLOR);
+                board8(theBoard, blue, black, white);
+                board7(theBoard, blue, black, white);
+                board6(theBoard, blue, black, white);
+                board5(theBoard, blue, black, white);
+                board4(theBoard, blue, black, white);
+                board3(theBoard, blue, black, white);
+                board2(theBoard, blue, black, white);
+                board1(theBoard, blue, black, white);
+                System.out.println(EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK +
+                        EscapeSequences.SET_TEXT_BOLD + "  h  g  f  e  d  c  b  a  " + EscapeSequences.RESET_BG_COLOR +
+                        EscapeSequences.RESET_TEXT_COLOR);
             }
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
+    }
+
+    public static void board1(ChessBoard theBoard, String blue, String black, String white) {
+        System.out.println(blue + "1" + white + helper(1, 1, theBoard) + black + helper(1, 2, theBoard) +
+                white + helper(1, 3, theBoard) + black + helper(1, 4, theBoard) + white +
+                helper(1, 5, theBoard) + black + helper(1, 6, theBoard) + white +
+                helper(1, 7, theBoard) + black + helper(1, 8, theBoard) + blue +
+                "1" + EscapeSequences.RESET_BG_COLOR);
+    }
+
+    public static void board2(ChessBoard theBoard, String blue, String black, String white) {
+        System.out.println(blue + "2" + black + helper(2, 1, theBoard) + white + helper(2, 2, theBoard) +
+                black + helper(2, 3, theBoard) + white + helper(2, 4, theBoard) + black +
+                helper(2, 5, theBoard) + white + helper(2, 6, theBoard) + black +
+                helper(2, 7, theBoard) + white + helper(2, 8, theBoard) + blue +
+                "2" + EscapeSequences.RESET_BG_COLOR);
+    }
+
+    public static void board3(ChessBoard theBoard, String blue, String black, String white) {
+        System.out.println(blue + "3" + white + helper(3, 1, theBoard) + black + helper(3, 2, theBoard) +
+                white + helper(3, 3, theBoard) + black + helper(3, 4, theBoard) + white +
+                helper(3, 5, theBoard) + black + helper(3, 6, theBoard) + white +
+                helper(3, 7, theBoard) + black + helper(3, 8, theBoard) + blue +
+                "3" + EscapeSequences.RESET_BG_COLOR);
+    }
+
+    public static void board4(ChessBoard theBoard, String blue, String black, String white) {
+        System.out.println(blue + "4" + black + helper(4, 1, theBoard) + white + helper(4, 2, theBoard) +
+                black + helper(4, 3, theBoard) + white + helper(4, 4, theBoard) + black +
+                helper(4, 5, theBoard) + white + helper(4, 6, theBoard) + black +
+                helper(4, 7, theBoard) + white + helper(4, 8, theBoard) + blue +
+                "4" + EscapeSequences.RESET_BG_COLOR);
+    }
+
+    public static void board5(ChessBoard theBoard, String blue, String black, String white) {
+        System.out.println(blue + "5" + white + helper(5, 1, theBoard) + black + helper(5, 2, theBoard) +
+                white + helper(5, 3, theBoard) + black + helper(5, 4, theBoard) + white +
+                helper(5, 5, theBoard) + black + helper(5, 6, theBoard) + white +
+                helper(5, 7, theBoard) + black + helper(5, 8, theBoard) + blue +
+                "5" + EscapeSequences.RESET_BG_COLOR);
+    }
+
+    public static void board6(ChessBoard theBoard, String blue, String black, String white) {
+        System.out.println(blue + "6" + black + helper(6, 1, theBoard) + white + helper(6, 2, theBoard) +
+                black + helper(6, 3, theBoard) + white + helper(6, 4, theBoard) + black +
+                helper(6, 5, theBoard) + white + helper(6, 6, theBoard) + black +
+                helper(6, 7, theBoard) + white + helper(6, 8, theBoard) + blue +
+                "6" + EscapeSequences.RESET_BG_COLOR);
+    }
+
+    public static void board7(ChessBoard theBoard, String blue, String black, String white) {
+        System.out.println(blue + "7" + white + helper(7, 1, theBoard) + black + helper(7, 2, theBoard) +
+                white + helper(7, 3, theBoard) + black + helper(7, 4, theBoard) + white +
+                helper(7, 5, theBoard) + black + helper(7, 6, theBoard) + white +
+                helper(7, 7, theBoard) + black + helper(7, 8, theBoard) + blue +
+                "7" + EscapeSequences.RESET_BG_COLOR);
+    }
+
+    public static void board8(ChessBoard theBoard, String blue, String black, String white) {
+        System.out.println(blue + "8" + black + helper(8, 1, theBoard) + white + helper(8, 2, theBoard) +
+                black + helper(8, 3, theBoard) + white + helper(8, 4, theBoard) + black +
+                helper(8, 5, theBoard) + white + helper(8, 6, theBoard) + black +
+                helper(8, 7, theBoard) + white + helper(8, 8, theBoard) + blue +
+                "8" + EscapeSequences.RESET_BG_COLOR);
     }
 
     public static String helper(int i, int j, ChessBoard board){

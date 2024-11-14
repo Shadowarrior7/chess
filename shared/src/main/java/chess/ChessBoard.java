@@ -103,7 +103,7 @@ public class ChessBoard {
         ChessPiece queen2 = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
         addPiece(new ChessPosition(1, 4), queen2);
         addPiece(new ChessPosition(1, 5), king2);
-        System.out.print(this);
+        //System.out.print(this);
     }
 
     @Override

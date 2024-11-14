@@ -1,10 +1,10 @@
 package server;
 
-import chess.ChessGame;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import model.*;
-import netscape.javascript.JSObject;
+
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 
@@ -40,8 +40,7 @@ public class ServerFacade {
 
         var json2 = json.getAsJsonArray("games");
         Type gameDataType = new TypeToken<Collection<GameData>>() {}.getType();
-        Collection<GameData> games = new Gson().fromJson(json2, gameDataType);
-        return games;
+        return new Gson().fromJson(json2, gameDataType);
     }
 
     public String createGame(String token, GameData name) throws Exception {
@@ -55,7 +54,7 @@ public class ServerFacade {
 
         this.makeRequest("PUT", path, game, null, token);
     }
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String token) throws Exception {
+    private  <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String token) throws Exception {
         try{
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
