@@ -409,7 +409,7 @@ public class Main {
         return "   ";
     }
 
-    public static String findID(int ID){
+    public static String findID(int id){
         String realID = "";
         try {
 
@@ -417,7 +417,7 @@ public class Main {
             int i = 0;
             for (GameData game : games) {
                 ++i;
-                if(i == ID){
+                if(i == id){
                     realID = String.valueOf(game.gameID());
                 }
             }
