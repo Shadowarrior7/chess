@@ -118,9 +118,7 @@ public class Main {
             }
             if(input.toLowerCase(Locale.ROOT).equals("list")){
                 try{
-                    //System.out.println("not here");
                     Collection<GameData> games = serverFacade.listGames(token);
-                    //System.out.println("here?");
                     listGames(games);
                 }catch (Exception e){
                     System.out.println(e.getMessage());
@@ -177,7 +175,6 @@ public class Main {
                     if(e.getMessage().equals("403")){
                         System.out.println("spot already taken");
                     }
-                    //System.out.println(e.getMessage());
                 }
             }
 
