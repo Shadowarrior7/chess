@@ -12,6 +12,7 @@ import java.util.Collection;
 public class ChessGame {
     private ChessBoard currentBoard;
     private TeamColor turnColor;
+    public int kingSafeMoves;
 
     public ChessGame() {
         currentBoard = new ChessBoard();
@@ -294,36 +295,6 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
 
-//      public boolean isInStalemate(TeamColor teamColor){
-//          if(isInCheck(teamColor) || isInCheckmate(teamColor)){
-//              return false;
-//          }
-//          ChessPosition myKingPos = getKingPosition(teamColor);
-//          if (myKingPos == null) {
-//              System.out.println("Big problem");
-//              return false;
-//          }
-//          Collection<ChessPosition> enemyPositions = getEnemyPositions(teamColor);
-//          ChessPiece kingPiece = currentBoard.getPiece(myKingPos);
-//          Collection<ChessMove> kingMoves = kingPiece.pieceMoves(getBoard(), myKingPos);
-//          for(ChessMove kingMove : kingMoves){
-//              for (ChessPosition enemy : enemyPositions) {
-//                  ChessPiece enemyPiece = currentBoard.getPiece(enemy);
-//                  Collection<ChessMove> enemyMoves = enemyPiece.pieceMoves(currentBoard, enemy);
-//                  for (ChessMove enemyMove : enemyMoves) {
-//                      if (enemyMove.getEndPosition().equals(kingMove.getEndPosition())){
-//
-//                      }
-//                  }
-//              }
-//
-//
-//
-//          }
-//
-//      }
-
-
     public boolean isInStalemate(TeamColor teamColor) {
         ChessPosition myKingPos = getKingPosition(teamColor);
         if (myKingPos == null) {
@@ -333,21 +304,28 @@ public class ChessGame {
         Collection<ChessPosition> enemyPositions = getEnemyPositions(teamColor);
         ChessPiece kingPiece = currentBoard.getPiece(myKingPos);
         Collection<ChessMove> kingMoves = kingPiece.pieceMoves(getBoard(), myKingPos);
-        int kingSafeMoves = kingMoves.size();
+        kingSafeMoves = kingMoves.size();
         for (ChessPosition enemy : enemyPositions) {
             ChessPiece enemyPiece = currentBoard.getPiece(enemy);
             Collection<ChessMove> enemyMoves = enemyPiece.pieceMoves(currentBoard, enemy);
             for (ChessMove enemyMove : enemyMoves) {
                 for (ChessMove kingMove : kingMoves) {
-                    if (enemyMove.getEndPosition().equals(kingMove.getEndPosition())) {
-                        --kingSafeMoves;
-                        System.out.println("king safe moves: "+ kingSafeMoves);
-                        if (kingSafeMoves == 0) {
-                            System.out.println("in stale mate");
-                            return true;
-                        }
+                    if (extracted(enemyMove, kingMove)) {
+                        return true;
                     }
                 }
+            }
+        }
+        return false;
+    }
+
+    private boolean extracted(ChessMove enemyMove, ChessMove kingMove) {
+        if (enemyMove.getEndPosition().equals(kingMove.getEndPosition())) {
+            --kingSafeMoves;
+            System.out.println("king safe moves: "+ kingSafeMoves);
+            if (kingSafeMoves == 0) {
+                System.out.println("in stale mate");
+                return true;
             }
         }
         return false;
