@@ -151,7 +151,17 @@ public class Main {
             }
 
             if (splitString[0].equals("join")){
+                boolean parseError = true;
+                boolean hmm;
                 try{
+                    int i = Integer.parseInt(splitString[1]);
+                    parseError = false;
+                    if(splitString[2].toUpperCase().equals("WHITE") || splitString[2].toUpperCase().equals("BLACK")){
+                        hmm = false;
+                    } else {
+                        System.out.println("must choose either white or black");
+                        throw new Exception("s");
+                    }
                     JoinGame jGame = new JoinGame(splitString[2].toUpperCase(Locale.ROOT), splitString[1]);
 
                     serverFacade.joinGame(token, jGame);
@@ -161,6 +171,9 @@ public class Main {
                     loop = false;
 
                 } catch (Exception e) {
+                    if(parseError){
+                        System.out.println("not a valid ID");
+                    }
                     if(e.getMessage().equals("403")){
                         System.out.println("spot already taken");
                     }
@@ -169,7 +182,16 @@ public class Main {
             }
 
             if (splitString[0].equals("observe")){
-                printBoard(Integer.parseInt(splitString[1]));
+                boolean parseError = true;
+                try {
+                    int i = Integer.parseInt(splitString[1]);
+                    parseError = false;
+                    printBoard(Integer.parseInt(splitString[1]));
+                }catch (Exception e){
+                    if(parseError){
+                        System.out.println("not a valid ID");
+                    }
+                }
             }
         }
     }
@@ -221,12 +243,12 @@ public class Main {
             assert theGame != null;
             ChessBoard theBoard = theGame.game().getBoard();
             String blue = EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_BOLD;
-            String black = EscapeSequences.SET_BG_COLOR_DARK_GREEN;
-            String white = EscapeSequences.SET_BG_COLOR_WHITE;
+            String black = EscapeSequences.SET_BG_COLOR_WHITE;
+            String white = EscapeSequences.SET_BG_COLOR_DARK_GREEN;
 
             if(color.equals("BLACK")) {
                 System.out.println("\n" + EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK +
-                        EscapeSequences.SET_TEXT_BOLD + "  a  b  c  d  e  f  g  h  " + EscapeSequences.RESET_BG_COLOR);
+                        EscapeSequences.SET_TEXT_BOLD + "  h  g  f  e  d  c  b  a  " + EscapeSequences.RESET_BG_COLOR);
                 board1(theBoard, blue, white, black);
                 board2(theBoard, blue, white, black);
                 board3(theBoard, blue, white, black);
@@ -236,12 +258,12 @@ public class Main {
                 board7(theBoard, blue, white, black);
                 board8(theBoard, blue, white, black);
                 System.out.println(EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK +
-                        EscapeSequences.SET_TEXT_BOLD + "  a  b  c  d  e  f  g  h  " + EscapeSequences.RESET_BG_COLOR +
+                        EscapeSequences.SET_TEXT_BOLD + "  h  g  f  e  d  c  b  a  " + EscapeSequences.RESET_BG_COLOR +
                         EscapeSequences.RESET_TEXT_COLOR);
             }
             else {
                 System.out.println("\n" + EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK +
-                        EscapeSequences.SET_TEXT_BOLD + "  h  g  f  e  d  c  b  a  " + EscapeSequences.RESET_BG_COLOR);
+                        EscapeSequences.SET_TEXT_BOLD + "  a  b  c  d  e  f  g  h  " + EscapeSequences.RESET_BG_COLOR);
                 board8(theBoard, blue, black, white);
                 board7(theBoard, blue, black, white);
                 board6(theBoard, blue, black, white);
@@ -251,7 +273,7 @@ public class Main {
                 board2(theBoard, blue, black, white);
                 board1(theBoard, blue, black, white);
                 System.out.println(EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK +
-                        EscapeSequences.SET_TEXT_BOLD + "  h  g  f  e  d  c  b  a  " + EscapeSequences.RESET_BG_COLOR +
+                        EscapeSequences.SET_TEXT_BOLD + "  a  b  c  d  e  f  g  h  " + EscapeSequences.RESET_BG_COLOR +
                         EscapeSequences.RESET_TEXT_COLOR);
             }
         }catch (Exception e){

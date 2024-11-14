@@ -51,7 +51,6 @@ public class ServerFacade {
 
     public void joinGame(String token, JoinGame game) throws Exception {
         var path = "/game";
-
         this.makeRequest("PUT", path, game, null, token);
     }
     private  <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String token) throws Exception {
@@ -68,7 +67,7 @@ public class ServerFacade {
             http.connect();
             var status = http.getResponseCode();
             if(!(status == 200)){
-                System.out.println("Error: " + status);
+                //System.out.println("Error: " + status);
                 throw new Exception(String.valueOf(status));
             }
             return readBody(http, responseClass);
