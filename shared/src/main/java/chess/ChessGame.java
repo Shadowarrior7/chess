@@ -13,6 +13,7 @@ public class ChessGame {
     private ChessBoard currentBoard;
     private TeamColor turnColor;
     public int kingSafeMoves;
+    public int kingSafeMoves2;
 
     public ChessGame() {
         currentBoard = new ChessBoard();
@@ -243,15 +244,16 @@ public class ChessGame {
             }
         }
         if (isInCheck(teamColor)) {
-            return loopFunction(enemyPositions, kingMoves, king, kingMovesCopy, newBoard);
+            return loopFunction(enemyPositions, kingMoves, king, kingSafeMoves, kingMovesCopy, newBoard);
         } else {
             return false;
         }
     }
 
     public boolean loopFunction(Collection<ChessPosition> enemyPositions, Collection<ChessMove> kingMoves,
-                                ChessPiece king,
+                                ChessPiece king, int kingSafeMoves,
                                 Collection<ChessMove> kingMovesCopy, ChessBoard newBoard) {
+        kingSafeMoves2 = kingSafeMoves;
         for (ChessPosition enemy : enemyPositions) {
             for (ChessMove kingMove : kingMoves) {
                 if (currentBoard.getPiece(kingMove.getEndPosition()) != null) {
@@ -262,9 +264,7 @@ public class ChessGame {
                 ChessPiece enemyPiece = currentBoard.getPiece(enemy);
                 Collection<ChessMove> enemyMoves = enemyPiece.pieceMoves(currentBoard, enemy);
                 for (ChessMove enemyMove : enemyMoves) {
-                    if (extracted(kingMovesCopy, kingMove, enemyMove)) {
-                        return true;
-                    }
+                    if (extracted(kingMovesCopy, kingMove, enemyMove)) return true;
                 }
 
                 currentBoard.setSquares(copyBoard(newBoard));
@@ -277,9 +277,9 @@ public class ChessGame {
 
     private boolean extracted(Collection<ChessMove> kingMovesCopy, ChessMove kingMove, ChessMove enemyMove) {
         if (enemyMove.getEndPosition().equals(kingMove.getEndPosition())) {
-            --kingSafeMoves;
+            --kingSafeMoves2;
             kingMovesCopy.remove(kingMove);
-            if (extract1(kingSafeMoves)) {
+            if (extract1(kingSafeMoves2)) {
                 return true;
             }
         }
