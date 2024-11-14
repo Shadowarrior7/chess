@@ -2,7 +2,12 @@ package server;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import model.*;
+import netscape.javascript.JSObject;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+
 import java.io.*;
 import java.net.*;
 import java.util.Collection;
@@ -29,19 +34,25 @@ public class ServerFacade {
         this.makeRequest("DELETE", path, token, null, token);
     }
 
-    public Collection listGames(String token) throws Exception {
+    public Collection<GameData> listGames(String token) throws Exception {
         var path = "/game";
-        return this.makeRequest("GET", path, token, Collection.class, token);
+        var json = this.makeRequest("GET", path, null, JsonObject.class, token);
+
+        var json2 = json.getAsJsonArray("games");
+        Type gameDataType = new TypeToken<Collection<GameData>>() {}.getType();
+        Collection<GameData> games = new Gson().fromJson(json2, gameDataType);
+        return games;
     }
 
     public String createGame(String token, GameData name) throws Exception {
         var path = "/game";
-        var id = this.makeRequest("POST", path, name, String.class, token);
-        return id;
+        var id = this.makeRequest("POST", path, name, JsonObject.class, token);
+        return id.toString();
     }
 
     public void joinGame(String token, JoinGame game) throws Exception {
         var path = "/game";
+
         this.makeRequest("PUT", path, game, null, token);
     }
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String token) throws Exception {

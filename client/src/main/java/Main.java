@@ -1,6 +1,7 @@
 import chess.*;
 import model.AuthData;
 import model.GameData;
+import model.JoinGame;
 import model.UserData;
 import server.ServerFacade;
 
@@ -14,6 +15,8 @@ public class Main {
     private static boolean loginFlag;
     private static String token;
     private static boolean exit;
+    private static boolean joinFlag;
+    private static String color;
 
 
     public static void main(String[] args) {
@@ -23,6 +26,7 @@ public class Main {
         whoAmI = "Logged Out";
         exit = false;
         loginFlag = false;
+        joinFlag = false;
         serverFacade = new ServerFacade("http://localhost:8080");
         while (!exit) {
             preLogin(args);
@@ -30,6 +34,10 @@ public class Main {
                 return;
             }
             loggedIn(args);
+            if (!joinFlag){
+                return;
+            }
+            game(args);
         }
     }
 
@@ -99,7 +107,7 @@ public class Main {
             if(input.toLowerCase(Locale.ROOT).equals("list")){
                 try{
                     Collection<GameData> games = serverFacade.listGames(token);
-                    System.out.println(games);
+                    listGames(games);
                 }catch (Exception e){
                     System.out.println(e.getMessage());
                 }
@@ -128,6 +136,54 @@ public class Main {
                 }
             }
 
+            if (splitString[0].equals("join")){
+                try{
+                    JoinGame jGame = new JoinGame(splitString[2].toUpperCase(Locale.ROOT), splitString[1]);
+
+                    serverFacade.joinGame(token, jGame);
+                    color = splitString[2];
+
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+
+            if (splitString[0].equals("observe")){
+                //print the board of the given id
+            }
+        }
+    }
+
+    private static void listGames(Collection<GameData> games){
+        int i = 0;
+        for (GameData game : games) {
+            ++i;
+
+            System.out.println(i + ": ID= " +game.gameID() + ", game name= " + game.gameName() + ", white player = " + game.whiteUsername() +
+                    ", black player = " + game.blackUsername());
+        }
+    }
+
+    public static void game(String[] args){
+        //print board
+        Scanner scanner = new Scanner(System.in);
+        boolean loop = true;
+        while (loop){
+            System.out.println("(" + whoAmI + ") >>>> ");
+            String input = scanner.nextLine().trim().toLowerCase();
+            if (input.equals("quit")){
+                joinFlag = false;
+                loop = false;
+            }
+            if (input.equals("help")){
+                System.out.println("move <piece position> <destination> - put put inputs in coordinate form");
+                System.out.println("refresh");
+                System.out.println("quit");
+                System.out.println("help");
+            }
+            if(input.equals("refresh")){
+                //print the board
+            }
         }
     }
 }
