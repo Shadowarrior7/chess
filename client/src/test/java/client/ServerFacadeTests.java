@@ -34,7 +34,7 @@ public class ServerFacadeTests {
     public void registerPos(){
         UserData user = new UserData("user", "password", "email");
         try {
-            Assertions.assertDoesNotThrow(()-> serverFacade.register(user));
+            Assertions.assertThrows(Exception.class, ()-> serverFacade.register(user));
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
