@@ -264,7 +264,9 @@ public class ChessGame {
                 ChessPiece enemyPiece = currentBoard.getPiece(enemy);
                 Collection<ChessMove> enemyMoves = enemyPiece.pieceMoves(currentBoard, enemy);
                 for (ChessMove enemyMove : enemyMoves) {
-                    if (extracted(kingMovesCopy, kingMove, enemyMove)) return true;
+                    if (extracted(kingMovesCopy, kingMove, enemyMove)) {
+                        return true;
+                    }
                 }
 
                 currentBoard.setSquares(copyBoard(newBoard));
