@@ -69,7 +69,7 @@ public class ServerFacade {
             var status = http.getResponseCode();
             if(!(status == 200)){
                 System.out.println("Error: " + status);
-                throw new Exception();
+                throw new Exception(String.valueOf(status));
             }
             return readBody(http, responseClass);
         }

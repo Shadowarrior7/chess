@@ -73,7 +73,9 @@ public class Main {
                     whoAmI = splitString[1];
 
                 } catch (Exception e){
-                    System.out.println(e.getMessage());
+                    if (e.getMessage().equals("403")){
+                        System.out.println("this user is already taken");
+                    }
                 }
             }
             if(splitString[0].equals("login")){
@@ -83,7 +85,9 @@ public class Main {
                     loginFlag = true;
                     whoAmI = splitString[1];
                 } catch (Exception e){
-                    System.out.println(e.getMessage());
+                    if(e.getMessage().equals("401")){
+                        System.out.println("unauthorized");
+                    }
                 }
             }
         }
@@ -157,7 +161,10 @@ public class Main {
                     loop = false;
 
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    if(e.getMessage().equals("403")){
+                        System.out.println("spot already taken");
+                    }
+                    //System.out.println(e.getMessage());
                 }
             }
 
