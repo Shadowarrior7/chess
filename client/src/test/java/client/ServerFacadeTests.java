@@ -32,9 +32,9 @@ public class ServerFacadeTests {
     //positive
     @Test
     public void registerPos(){
-        UserData user = new UserData("user", "password", "email");
+        UserData user7 = new UserData("user234", "password3434", "ema34il");
         try {
-            Assertions.assertThrows(Exception.class, ()-> serverFacade.register(user));
+            Assertions.assertThrows(Exception.class, ()-> serverFacade.register(user7));
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
