@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.*;
 import java.io.*;
@@ -15,29 +16,40 @@ public class ServerFacade {
 
     public AuthData register(UserData user) throws Exception {
         var path = "/user";
-        return this.makeRequest("POST", path, user, AuthData.class );
+        return this.makeRequest("POST", path, user, AuthData.class, null);
     }
 
     public AuthData login(UserData user) throws Exception {
         var path = "/session";
-        return this.makeRequest("POST", path, user, AuthData.class);
+        return this.makeRequest("POST", path, user, AuthData.class, null);
     }
 
     public void logout(String token) throws Exception {
         var path = "/session";
-        this.makeRequest("DELETE", path, token, null);
+        this.makeRequest("DELETE", path, token, null, token);
     }
 
-    public Collection<GameData> listGames(String token) throws Exception {
+    public Collection listGames(String token) throws Exception {
         var path = "/game";
-        return this.makeRequest("GET", path, token, GameData.class);
+        return this.makeRequest("GET", path, token, Collection.class, token);
     }
 
-    public int createGame(String Token)
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception {
+    public int createGame(String token) throws Exception {
+        var path = "/game";
+        return this.makeRequest("POST", path, token, int.class, token);
+    }
+
+    public void joinGame(String token, JoinGame game) throws Exception {
+        var path = "/game";
+        this.makeRequest("PUT", path, game, null, token);
+    }
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String token) throws Exception {
         try{
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
+            if (token != null){
+                http.setRequestProperty("Authorization", token);
+            }
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
