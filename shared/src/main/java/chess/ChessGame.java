@@ -243,14 +243,14 @@ public class ChessGame {
             }
         }
         if (isInCheck(teamColor)) {
-            return loopFunction(enemyPositions, kingMoves, king, kingSafeMoves, kingMovesCopy, newBoard);
+            return loopFunction(enemyPositions, kingMoves, king, kingMovesCopy, newBoard);
         } else {
             return false;
         }
     }
 
     public boolean loopFunction(Collection<ChessPosition> enemyPositions, Collection<ChessMove> kingMoves,
-                                ChessPiece king, int kingSafeMoves,
+                                ChessPiece king,
                                 Collection<ChessMove> kingMovesCopy, ChessBoard newBoard) {
         for (ChessPosition enemy : enemyPositions) {
             for (ChessMove kingMove : kingMoves) {
@@ -262,12 +262,8 @@ public class ChessGame {
                 ChessPiece enemyPiece = currentBoard.getPiece(enemy);
                 Collection<ChessMove> enemyMoves = enemyPiece.pieceMoves(currentBoard, enemy);
                 for (ChessMove enemyMove : enemyMoves) {
-                    if (enemyMove.getEndPosition().equals(kingMove.getEndPosition())) {
-                        --kingSafeMoves;
-                        kingMovesCopy.remove(kingMove);
-                        if (extract1(kingSafeMoves)) {
-                            return true;
-                        }
+                    if (extracted(kingMovesCopy, kingMove, enemyMove)) {
+                        return true;
                     }
                 }
 
@@ -276,6 +272,17 @@ public class ChessGame {
             }
         }
         System.out.println(kingMovesCopy);
+        return false;
+    }
+
+    private boolean extracted(Collection<ChessMove> kingMovesCopy, ChessMove kingMove, ChessMove enemyMove) {
+        if (enemyMove.getEndPosition().equals(kingMove.getEndPosition())) {
+            --kingSafeMoves;
+            kingMovesCopy.remove(kingMove);
+            if (extract1(kingSafeMoves)) {
+                return true;
+            }
+        }
         return false;
     }
 
