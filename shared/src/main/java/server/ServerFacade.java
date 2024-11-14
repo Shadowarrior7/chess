@@ -34,9 +34,10 @@ public class ServerFacade {
         return this.makeRequest("GET", path, token, Collection.class, token);
     }
 
-    public int createGame(String token) throws Exception {
+    public String createGame(String token, GameData name) throws Exception {
         var path = "/game";
-        return this.makeRequest("POST", path, token, int.class, token);
+        var id = this.makeRequest("POST", path, name, String.class, token);
+        return id;
     }
 
     public void joinGame(String token, JoinGame game) throws Exception {
@@ -58,7 +59,7 @@ public class ServerFacade {
             var status = http.getResponseCode();
             if(!(status == 200)){
                 System.out.println("Error: " + status);
-                return null;
+                throw new Exception();
             }
             return readBody(http, responseClass);
         }

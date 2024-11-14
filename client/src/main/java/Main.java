@@ -38,7 +38,7 @@ public class Main {
         boolean loop = true;
         while (loop) {
             System.out.println("(" + whoAmI + ") >>>> ");
-            String input = scanner.nextLine();
+            String input = scanner.nextLine().trim();
 
             if(input.toLowerCase(Locale.ROOT).equals("help")){
                 System.out.println("register <Username> <Password> <Email> - creates an account");
@@ -53,7 +53,11 @@ public class Main {
             String[] splitString = input.toLowerCase(Locale.ROOT).split(" ");
             if(splitString[0].equals("register")){
                 try{
-                    serverFacade.register(new UserData(splitString[1], splitString[2], splitString[3]));
+                    token = serverFacade.register(new UserData(splitString[1], splitString[2], splitString[3])).authToken();
+                    loginFlag = true;
+                    loop = false;
+                    whoAmI = splitString[1];
+
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
@@ -77,7 +81,7 @@ public class Main {
         System.out.println("Logged in as: " + whoAmI + "! Type Help to view options");
         while (loop) {
             System.out.println("(" + whoAmI + ") >>>> ");
-            String input = scanner.nextLine();
+            String input = scanner.nextLine().trim();
 
             if(input.toLowerCase(Locale.ROOT).equals("help")){
                 System.out.println("create <Name>");
@@ -89,6 +93,7 @@ public class Main {
                 System.out.println("help");
             }
             if(input.toLowerCase(Locale.ROOT).equals("quit")){
+                exit = true;
                 loop = false;
             }
             if(input.toLowerCase(Locale.ROOT).equals("list")){
@@ -99,8 +104,29 @@ public class Main {
                     System.out.println(e.getMessage());
                 }
             }
+            if (input.toLowerCase(Locale.ROOT).equals("logout")){
+                try {
+                    serverFacade.logout(token);
+                    loginFlag = false;
+                    token = null;
+                    whoAmI = "Logged Out";
+                    loop = false;
+                }catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
+            }
 
             String[] splitString = input.toLowerCase(Locale.ROOT).split(" ");
+            if (splitString[0].equals("create")){
+                try{
+                    GameData game = new GameData(1, null, null, splitString[1], null);
+                    String json = serverFacade.createGame(token, game);
+                    String number = json.replaceAll("[^0-9]", "");
+                    System.out.println("Here is your game ID = "+ number);
+                } catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
+            }
 
         }
     }
