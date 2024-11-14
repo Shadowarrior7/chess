@@ -111,10 +111,6 @@ public class Main {
                 System.out.println("quit");
                 System.out.println("help");
             }
-            if(input.toLowerCase(Locale.ROOT).equals("quit")){
-                exit = true;
-                loop = false;
-            }
             if(input.toLowerCase(Locale.ROOT).equals("list")){
                 try{
                     Collection<GameData> games = serverFacade.listGames(token);
