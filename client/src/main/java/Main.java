@@ -180,6 +180,9 @@ public class Main {
                 try {
                     int i = Integer.parseInt(splitString[1]);
                     String realId = findID(i);
+                    if (realId.isEmpty()){
+                        throw new Exception("");
+                    }
                     parseError = false;
                     printBoard(Integer.parseInt(realId));
                 }catch (Exception e){
