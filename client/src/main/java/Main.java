@@ -179,8 +179,9 @@ public class Main {
                 boolean parseError = true;
                 try {
                     int i = Integer.parseInt(splitString[1]);
+                    String realId = findID(i);
                     parseError = false;
-                    printBoard(Integer.parseInt(splitString[1]));
+                    printBoard(Integer.parseInt(realId));
                 }catch (Exception e){
                     if(parseError){
                         System.out.println("not a valid ID");
