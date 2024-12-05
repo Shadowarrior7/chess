@@ -212,17 +212,35 @@ public class Main{
         while (loop){
             System.out.println("(" + whoAmI + ") >>>> ");
             String input = scanner.nextLine().trim().toLowerCase();
-            if (input.equals("quit")){
+            if (input.equals("leave")){
+                //color = null;
+                Collection<GameData> games = serverFacade.listGames(token);
+                for (GameData game : games){
+                    if(game.gameID() == gameIDG){
+                        if(game.blackUsername() != null && game.blackUsername().equals(whoAmI)){
+                            ChessGame newGame = new ChessGame();
+                            ChessBoard newBoard = new ChessBoard();
+                            newBoard.setSquares(game.game().copyBoard(game.game().getBoard()));
+                            newGame.setBoard(newBoard);
+                            GameData updated = new GameData(game.gameID(), game.whiteUsername(), null, game.gameName(), newGame);
+                            serverFacade.makeMove(token, game, updated);
+                        }
+                        if(game.whiteUsername() != null && game.whiteUsername().equals(whoAmI)){
+                            GameData updated = new GameData(game.gameID(), null, game.blackUsername(), game.gameName(), game.game());
+                            serverFacade.makeMove(token, game, updated);
+                        }
+                    }
+                }
                 joinFlag = false;
                 loop = false;
             }
             if (input.equals("help")){
                 System.out.println("move <piece position> <destination> - put put inputs in coordinate form");
-                System.out.println("refresh");
-                System.out.println("quit");
+                System.out.println("redraw chess board");
+                System.out.println("leave");
                 System.out.println("help");
             }
-            if(input.equals("refresh")){
+            if(input.equals("redraw chess board")){
                 printBoard(gameIDG);
             }
             String[] splitString = input.toLowerCase(Locale.ROOT).split(" ");

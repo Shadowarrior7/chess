@@ -9,11 +9,13 @@ import model.GameData;
 import model.UserData;
 import model.JoinGame;
 import model.makeMove;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.mindrot.jbcrypt.BCrypt;
 import service.AuthService;
 import service.UserService;
 import spark.*;
 import service.GameService;
+import websocket.commands.UserGameCommand;
 
 import java.util.Collection;
 import java.util.Map;
@@ -27,6 +29,15 @@ public class Server {
         userService = new UserService();
         gameService = new GameService();
         authService = new AuthService();
+    }
+
+    @OnWebSocketMessage
+    public void onMessage(Session session, String msg){
+        try{
+            Gson serializer = new Gson();
+            UserGameCommand command = serializer.fromJson(msg, UserGameCommand.class);
+            String username = getUsername(command.getAuthToken());
+        }
     }
     public int run(int desiredPort) {
         Spark.port(desiredPort);
