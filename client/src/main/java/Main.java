@@ -22,7 +22,7 @@ public class Main{
     private static ChessGame game;
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         System.out.println("♕ 240 Chess Client: " + piece);
         System.out.println("Welcome to a pretty ok chess app. Type Help to get stated\n");
@@ -204,7 +204,7 @@ public class Main{
         }
     }
 
-    public static void game(String[] args){
+    public static void game(String[] args) throws Exception {
         printBoard(gameIDG);
         System.out.println("You are in a game");
         Scanner scanner = new Scanner(System.in);
@@ -233,9 +233,74 @@ public class Main{
                     System.out.println("not valid move syntax");
                 }
                 else {
-
+                    GameData myGame = null;
+                    Collection<GameData> games = serverFacade.listGames(token);
+                    for (GameData game : games) {
+                        if (game.gameID() == gameIDG){
+                            myGame = game;
+                        }
+                    }
+                    assert myGame != null;
+                    if(!myGame.game().getBoard().getPiece(toMove).getTeamColor().toString().toLowerCase(Locale.ROOT).equals(color)){
+                        System.out.println("the piece you are trying to move is not yours");
+                        continue;
+                    }
+                    try {
+                        ChessGame oldGame = myGame.game();
+                        ChessGame newGame = myGame.game();
+                        newGame.makeMove(new ChessMove(toMove, dest, promotionPiece(toMove, dest, myGame.game())));
+                        GameData oldGameData = new GameData(myGame.gameID(), myGame.whiteUsername(), myGame.blackUsername(), myGame.gameName(), oldGame);
+                        GameData newGameData = new GameData(myGame.gameID(), myGame.whiteUsername(), myGame.blackUsername(), myGame.gameName(), newGame);
+                        serverFacade.makeMove(token, oldGameData, newGameData);
+                    } catch (Exception e){
+                        System.out.println(e.getMessage());
+                    }
+                    printBoard(gameIDG);
                 }
             }
+        }
+    }
+
+    public static ChessPiece.PieceType promotionPiece(ChessPosition toMove, ChessPosition dest, ChessGame game) throws Exception {
+        Scanner scanner = new Scanner(System.in);
+        if(!game.getBoard().getPiece(toMove).getPieceType().equals(ChessPiece.PieceType.PAWN)){
+            return null;
+        }
+        if (color.equals("white") && dest.getRow() == 8){
+            System.out.println("you can promote this pawn, please give a piece type to promote to. ex( queen ): ");
+            String input = scanner.nextLine().trim().toLowerCase();
+            return parsePiece(input);
+        }
+        else if (color.equals("black") && dest.getRow() == 1) {
+            System.out.println("you can promote this pawn, please give a piece type to promote to. ex( queen ): ");
+            String input = scanner.nextLine().trim().toLowerCase();
+            return parsePiece(input);
+        }
+        else {
+            return null;
+        }
+    }
+
+    public static ChessPiece.PieceType parsePiece(String input) throws Exception {
+        input = input.toLowerCase(Locale.ROOT);
+        if (input.equals("queen")){
+            return ChessPiece.PieceType.QUEEN;
+        }
+        else if (input.equals("rook")){
+            return ChessPiece.PieceType.ROOK;
+        }
+        else if (input.equals("bishop")){
+            return ChessPiece.PieceType.BISHOP;
+        }
+        else if (input.equals("knight")){
+            return ChessPiece.PieceType.KNIGHT;
+        }
+        else if (input.equals("pawn")){
+            return ChessPiece.PieceType.PAWN;
+        }
+        else {
+            //System.out.println("not a valid piece to promote too");
+            throw new Exception("not a valid piece to promote too");
         }
     }
 

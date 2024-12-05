@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
@@ -7,6 +8,7 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 import model.JoinGame;
+import model.makeMove;
 import org.mindrot.jbcrypt.BCrypt;
 import service.AuthService;
 import service.UserService;
@@ -104,6 +106,26 @@ public class Server {
                 return "{}";
             } catch (GenericException e) {
                 System.out.println("error here in join game");
+                response.status(e.code);
+                return serializer.toJson(Map.of("message", e.getMessage()));
+            }
+        });
+
+        Spark.put("/makeMove", (request, response) -> {
+            response.type("application/json");
+            try {
+                makeMove makeMoveRequest = serializer.fromJson(request.body(), makeMove.class);
+                if(request.headers() == null){
+                    response.status(400);
+                    return "{ \"message\": \"Error: bad request\" }";
+                }
+                String token = request.headers("Authorization");
+                makeMove(token, makeMoveRequest.oldGame(), makeMoveRequest.newGame());
+                response.status(200);
+                return "{}";
+            }
+            catch (GenericException e) {
+                System.out.println("error when making the move");
                 response.status(e.code);
                 return serializer.toJson(Map.of("message", e.getMessage()));
             }
@@ -310,6 +332,20 @@ public class Server {
                 throw new GenericException("Error: already taken", 403);
             }
         }
+    }
+
+    public void makeMove(String token, GameData oldGame, GameData newGame) throws DataAccessException {
+        new DatabaseManager();
+        AuthData authData = authService.getAuthenByToken(token);
+        System.out.println("got authdata");
+        if (authData == null){
+            throw new GenericException("Error: Unauthorized", 401);
+        }
+        if(oldGame == null || newGame == null){
+            throw new GenericException("Error: bad request", 400);
+        }
+        gameService.updateGame(newGame, oldGame);
+        System.out.println("move has been made successfully");
     }
 
     private void extra(GameData game, AuthData authData) throws DataAccessException {

@@ -1,6 +1,7 @@
 package server;
 
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import model.*;
@@ -52,6 +53,12 @@ public class ServerFacade {
     public void joinGame(String token, JoinGame game) throws Exception {
         var path = "/game";
         this.makeRequest("PUT", path, game, null, token);
+    }
+
+    public void makeMove(String token, GameData oldGame, GameData newGame) throws Exception {
+        var path = "/makeMove";
+        makeMove move = new makeMove(oldGame, newGame);
+        this.makeRequest("PUT", path, move, null, token);
     }
     private  <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String token) throws Exception {
         try{
