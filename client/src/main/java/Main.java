@@ -241,10 +241,10 @@ public class Main{
                         }
                     }
                     assert myGame != null;
-                    if(!myGame.game().getBoard().getPiece(toMove).getTeamColor().toString().toLowerCase(Locale.ROOT).equals(color)){
-                        System.out.println("the piece you are trying to move is not yours");
-                        continue;
-                    }
+//                    if(!myGame.game().getBoard().getPiece(toMove).getTeamColor().toString().toLowerCase(Locale.ROOT).equals(color)){
+//                        System.out.println("the piece you are trying to move is not yours");
+//                        continue;
+//                    }
                     try {
                         ChessGame oldGame = myGame.game();
                         ChessGame newGame = myGame.game();
