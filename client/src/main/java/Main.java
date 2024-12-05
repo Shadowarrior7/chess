@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Scanner;
 
-public class Main {
+public class Main{
     public static String whoAmI;
     public static ServerFacade serverFacade;
     private static boolean loginFlag;
@@ -19,6 +19,7 @@ public class Main {
     private static boolean joinFlag;
     private static String color;
     private static int gameIDG;
+    private static ChessGame game;
 
 
     public static void main(String[] args) {
@@ -224,6 +225,44 @@ public class Main {
             if(input.equals("refresh")){
                 printBoard(gameIDG);
             }
+            String[] splitString = input.toLowerCase(Locale.ROOT).split(" ");
+            if(splitString[0].equals("move")){
+                ChessPosition toMove = convertPosition(splitString[1]);
+                ChessPosition dest = convertPosition(splitString[2]);
+                if(toMove == null || dest == null){
+                    System.out.println("not valid move syntax");
+                }
+                else {
+
+                }
+            }
+        }
+    }
+
+    public static ChessPosition convertPosition(String position){
+        int finalColumn = 0;
+        int finalRow = 0;
+        if(position.length() != 2){
+            return null;
+        }
+        String column = position.substring(0, position.length() /2);
+        String row = position.substring(position.length()/2);
+
+        if (Character.isLetter(column.charAt(0)) && Character.isDigit(row.charAt(0))) {
+
+            char firstChar = Character.toLowerCase(column.charAt(0));
+            int number = Integer.parseInt(row);
+
+            if (firstChar >= 'a' && firstChar <= 'h' && number >= 1 && number <= 8){
+                finalColumn = firstChar - 'a' +1;
+                finalRow = number;
+                return new ChessPosition(finalRow, finalColumn);
+            }
+            else {
+                return null;
+            }
+        } else {
+            return null;
         }
     }
 
