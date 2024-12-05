@@ -9,13 +9,18 @@ import model.GameData;
 import model.UserData;
 import model.JoinGame;
 import model.makeMove;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.mindrot.jbcrypt.BCrypt;
 import service.AuthService;
 import service.UserService;
 import spark.*;
 import service.GameService;
+import websocket.commands.Connect;
 import websocket.commands.UserGameCommand;
+
 
 import java.util.Collection;
 import java.util.Map;
@@ -24,11 +29,13 @@ public class Server {
     private UserService userService;
     private GameService gameService;
     private AuthService authService;
+    private WebSocketSession webSocketSession;
 
     public Server() {
         userService = new UserService();
         gameService = new GameService();
         authService = new AuthService();
+        webSocketSession = new WebSocketSession();
     }
 
     @OnWebSocketMessage
@@ -36,9 +43,37 @@ public class Server {
         try{
             Gson serializer = new Gson();
             UserGameCommand command = serializer.fromJson(msg, UserGameCommand.class);
-            String username = getUsername(command.getAuthToken());
+            String username = authService.getAuthenByToken(command.getAuthToken()).username();
+            webSocketSession.addSessionToGame(command.getGameID(), session);
+            
+            switch (command.getCommandType()){
+                case CONNECT -> connect(session, username, command);
+                case MAKE_MOVE -> makeMove(session, username, command);
+                case LEAVE -> leaveGame(session, username, command);
+                case RESIGN -> resignGame(session, username, command);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
+
+    @OnWebSocketConnect
+    public void onConnect(Session session){
+
+    }
+
+    @OnWebSocketClose
+    public void onClose(Session session){
+
+    }
+
+    @OnWebSocketError
+    public void onError(Throwable throwable){
+
+    }
+
+
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
@@ -377,5 +412,19 @@ public class Server {
         userService.clear();
         gameService.clear();
         authService.clear();
+    }
+
+    //WS service
+    public void connect(Session session, String username, UserGameCommand command){
+
+    }
+    public void makeMove(Session session, String username, UserGameCommand command){
+
+    }
+    public void leaveGame(Session session, String username, UserGameCommand command){
+
+    }
+    public void resignGame(Session session, String username, UserGameCommand command){
+
     }
 }

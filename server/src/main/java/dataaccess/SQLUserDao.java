@@ -11,6 +11,7 @@ public class SQLUserDao {
 
     }
 
+
     public  UserData getUser(String username) throws DataAccessException {
         String username2 = null;
         String password = null;
