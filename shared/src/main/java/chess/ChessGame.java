@@ -93,7 +93,7 @@ public class ChessGame {
         TeamColor teamColor = getTeamTurn();
 
         if (teamColor != pieceColor) {
-            System.out.print("not your turn");
+            System.out.print("that piece is not yours");
             throw new InvalidMoveException();
         }
         Collection<ChessMove> legalMoves = validMoves(move.getStartPosition());
@@ -185,7 +185,7 @@ public class ChessGame {
         Collection<ChessPosition> enemyPositions = getEnemyPositions(teamColor);
         ChessBoard board = currentBoard;
         if (enemyPositions.isEmpty()) {
-            System.out.println("there are no enemy's ");
+            //System.out.println("there are no enemy's ");
             return false;
         }
         ChessPosition myKingPos = getKingPosition(teamColor);
@@ -216,7 +216,7 @@ public class ChessGame {
         ChessBoard newBoard = new ChessBoard();
         newBoard.setSquares(copyBoard(board));
         if (myKingPos == null) {
-            System.out.println("king pos is null");
+            //System.out.println("king pos is null");
             return false;
         }
         ChessPiece king = board.getPiece(myKingPos);
@@ -308,7 +308,7 @@ public class ChessGame {
     public boolean isInStalemate(TeamColor teamColor) {
         ChessPosition myKingPos = getKingPosition(teamColor);
         if (myKingPos == null) {
-            System.out.println("Big problem");
+            //System.out.println("Big problem");
             return false;
         }
         Collection<ChessPosition> enemyPositions = getEnemyPositions(teamColor);
@@ -332,7 +332,7 @@ public class ChessGame {
     private boolean extracted(ChessMove enemyMove, ChessMove kingMove) {
         if (enemyMove.getEndPosition().equals(kingMove.getEndPosition())) {
             --kingSafeMoves;
-            System.out.println("king safe moves: "+ kingSafeMoves);
+            //System.out.println("king safe moves: "+ kingSafeMoves);
             if (kingSafeMoves == 0) {
                 System.out.println("in stale mate");
                 return true;
@@ -355,7 +355,7 @@ public class ChessGame {
                 }
             }
         }
-        System.out.println("problem with finding the king");
+        //System.out.println("problem with finding the king");
         return null;
     }
 

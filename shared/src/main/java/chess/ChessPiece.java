@@ -96,9 +96,9 @@ public class ChessPiece {
                     currentColumn += move[1];
 
                     //checks if piece is off the board
-                    System.out.println(currentRow + " " + currentColumn);
+                    //System.out.println(currentRow + " " + currentColumn);
                     if (currentRow < 1 || currentRow > 8 || currentColumn < 1 || currentColumn > 8) {
-                        System.out.println("out of bounds");
+                        //System.out.println("out of bounds");
                         break;
                     }
                     //check to see if there is a piece there
@@ -109,7 +109,7 @@ public class ChessPiece {
                         extract1(board, myPosition, newPosition, myColor, moves);
                         break;
                     }
-                    System.out.println("no piece there");
+                    //System.out.println("no piece there");
                     ChessMove moveToAdd = new ChessMove(myPosition, newPosition, null);
                     moves.add(moveToAdd);
                 }
@@ -242,15 +242,15 @@ public class ChessPiece {
 
     private static void extract1(ChessBoard board, ChessPosition myPosition,
                                  ChessPosition newPosition, ChessGame.TeamColor myColor, Collection<ChessMove> moves) {
-        System.out.println("piece there");
+        //System.out.println("piece there");
         ChessGame.TeamColor pieceColor = board.getPiece(newPosition).getTeamColor();
         //checks if you can take the piece
         if (pieceColor.equals(myColor)) {
-            System.out.println("same color");
+            //System.out.println("same color");
             System.out.println(board.getPiece(newPosition).getPieceType());
             return;
         } else {
-            System.out.println("different color");
+            //System.out.println("different color");
             ChessMove moveToAdd = new ChessMove(myPosition, newPosition, null);
             moves.add(moveToAdd);
             return;

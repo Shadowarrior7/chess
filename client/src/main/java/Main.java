@@ -241,15 +241,27 @@ public class Main{
                         }
                     }
                     assert myGame != null;
-//                    if(!myGame.game().getBoard().getPiece(toMove).getTeamColor().toString().toLowerCase(Locale.ROOT).equals(color)){
-//                        System.out.println("the piece you are trying to move is not yours");
-//                        continue;
-//                    }
+                    ChessBoard board = myGame.game().getBoard();
+                    if(board.getPiece(toMove) == null){
+                        System.out.println("looks like you selected a piece to move that does not exist");
+                        continue;
+                    }
+                    if(!board.getPiece(toMove).getTeamColor().toString().equals(color)){
+                        System.out.println("the piece you are trying to move is not yours");
+                        //System.out.println(board.getPiece(toMove).getTeamColor().toString());
+                        continue;
+                    }
+                    if(!myGame.game().getTeamTurn().toString().equals(color)){
+                        System.out.println("not your turn");
+                        System.out.println("it is " + myGame.game().getTeamTurn().toString() + "'s turn");
+                        continue;
+                    }
                     try {
                         ChessGame newGame = new ChessGame();
                         ChessBoard newBoard = new ChessBoard();
                         newBoard.setSquares(myGame.game().copyBoard(myGame.game().getBoard()));
                         newGame.setBoard(newBoard);
+                        //newGame.changeTurn();
                         newGame.makeMove(new ChessMove(toMove, dest, promotionPiece(toMove, dest, myGame.game())));
                         GameData newGameData = new GameData(myGame.gameID(), myGame.whiteUsername(), myGame.blackUsername(), myGame.gameName(), newGame);
                         serverFacade.makeMove(token, myGame, newGameData);
@@ -267,12 +279,12 @@ public class Main{
         if(!game.getBoard().getPiece(toMove).getPieceType().equals(ChessPiece.PieceType.PAWN)){
             return null;
         }
-        if (color.equals("white") && dest.getRow() == 8){
+        if (color.equals("WHITE") && dest.getRow() == 8){
             System.out.println("you can promote this pawn, please give a piece type to promote to. ex( queen ): ");
             String input = scanner.nextLine().trim().toLowerCase();
             return parsePiece(input);
         }
-        else if (color.equals("black") && dest.getRow() == 1) {
+        else if (color.equals("BLACK") && dest.getRow() == 1) {
             System.out.println("you can promote this pawn, please give a piece type to promote to. ex( queen ): ");
             String input = scanner.nextLine().trim().toLowerCase();
             return parsePiece(input);
