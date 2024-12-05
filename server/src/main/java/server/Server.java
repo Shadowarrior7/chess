@@ -20,6 +20,7 @@ import spark.*;
 import service.GameService;
 import websocket.commands.Connect;
 import websocket.commands.UserGameCommand;
+import org.eclipse.jetty.websocket.api.Session;
 
 
 import java.util.Collection;
@@ -30,46 +31,14 @@ public class Server {
     private GameService gameService;
     private AuthService authService;
     private WebSocketSession webSocketSession;
+    private WebSocketHandler webSocketHandler;
 
     public Server() {
         userService = new UserService();
         gameService = new GameService();
         authService = new AuthService();
         webSocketSession = new WebSocketSession();
-    }
-
-    @OnWebSocketMessage
-    public void onMessage(Session session, String msg){
-        try{
-            Gson serializer = new Gson();
-            UserGameCommand command = serializer.fromJson(msg, UserGameCommand.class);
-            String username = authService.getAuthenByToken(command.getAuthToken()).username();
-            webSocketSession.addSessionToGame(command.getGameID(), session);
-            
-            switch (command.getCommandType()){
-                case CONNECT -> connect(session, username, command);
-                case MAKE_MOVE -> makeMove(session, username, command);
-                case LEAVE -> leaveGame(session, username, command);
-                case RESIGN -> resignGame(session, username, command);
-            }
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    @OnWebSocketConnect
-    public void onConnect(Session session){
-
-    }
-
-    @OnWebSocketClose
-    public void onClose(Session session){
-
-    }
-
-    @OnWebSocketError
-    public void onError(Throwable throwable){
+        webSocketHandler = new WebSocketHandler(authService, gameService, webSocketSession);
 
     }
 
@@ -89,6 +58,8 @@ public class Server {
         sparkPost2(serializer);
 
         sparkDelete(serializer);
+
+        Spark.webSocket("/ws", webSocketHandler);
 
         Spark.get("/game", (request, response) -> { //LIST GAMES
             response.type("application/json");
@@ -412,19 +383,5 @@ public class Server {
         userService.clear();
         gameService.clear();
         authService.clear();
-    }
-
-    //WS service
-    public void connect(Session session, String username, UserGameCommand command){
-
-    }
-    public void makeMove(Session session, String username, UserGameCommand command){
-
-    }
-    public void leaveGame(Session session, String username, UserGameCommand command){
-
-    }
-    public void resignGame(Session session, String username, UserGameCommand command){
-
     }
 }
