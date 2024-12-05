@@ -108,7 +108,7 @@ public class ChessGame {
             }
         }
         if (!isMoveLegal) {
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("not a legal move");
         }
 
         //this should execute the move, but idk
@@ -123,11 +123,12 @@ public class ChessGame {
         } else {
             currentBoard.addPiece(move.getEndPosition(), piece);
         }
-        if (teamColor.equals(TeamColor.WHITE)) {
-            setTeamTurn(TeamColor.BLACK);
-        } else {
-            setTeamTurn(TeamColor.WHITE);
-        }
+//        if (teamColor.equals(TeamColor.WHITE)) {
+//            setTeamTurn(TeamColor.BLACK);
+//        } else {
+//            setTeamTurn(TeamColor.WHITE);
+//        }
+        changeTurn();
     }
 
     public void boardChanger(ChessPosition positionToRemove) {
@@ -374,6 +375,15 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         currentBoard = board;
+    }
+
+    public void changeTurn(){
+        if (turnColor.equals(TeamColor.BLACK)) {
+            turnColor = TeamColor.WHITE;
+        }
+        else {
+            turnColor = TeamColor.BLACK;
+        }
     }
 
     /**

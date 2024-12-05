@@ -344,6 +344,7 @@ public class Server {
         if(oldGame == null || newGame == null){
             throw new GenericException("Error: bad request", 400);
         }
+        newGame.game().changeTurn();
         gameService.updateGame(newGame, oldGame);
         System.out.println("move has been made successfully");
     }

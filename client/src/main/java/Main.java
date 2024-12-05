@@ -246,12 +246,13 @@ public class Main{
 //                        continue;
 //                    }
                     try {
-                        ChessGame oldGame = myGame.game();
-                        ChessGame newGame = myGame.game();
+                        ChessGame newGame = new ChessGame();
+                        ChessBoard newBoard = new ChessBoard();
+                        newBoard.setSquares(myGame.game().copyBoard(myGame.game().getBoard()));
+                        newGame.setBoard(newBoard);
                         newGame.makeMove(new ChessMove(toMove, dest, promotionPiece(toMove, dest, myGame.game())));
-                        GameData oldGameData = new GameData(myGame.gameID(), myGame.whiteUsername(), myGame.blackUsername(), myGame.gameName(), oldGame);
                         GameData newGameData = new GameData(myGame.gameID(), myGame.whiteUsername(), myGame.blackUsername(), myGame.gameName(), newGame);
-                        serverFacade.makeMove(token, oldGameData, newGameData);
+                        serverFacade.makeMove(token, myGame, newGameData);
                     } catch (Exception e){
                         System.out.println(e.getMessage());
                     }

@@ -82,7 +82,7 @@ public class SQLGameDao {
             preparedStatement.setString(1, oldGameJson);
             preparedStatement.executeUpdate();
 
-            statement= "INSERT INTO games (game) VALUE (?)";
+            statement= "INSERT INTO games (game) VALUES (?)";
             var preparedStatement2 = conn.prepareStatement(statement);
             preparedStatement2.setString(1, updatedGameJson);
             preparedStatement2.executeUpdate();
