@@ -1,7 +1,6 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
 import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
@@ -13,10 +12,12 @@ import service.AuthService;
 import service.GameService;
 import websocket.commands.*;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGame;
 import websocket.messages.Notification;
 import websocket.messages.ServerMessage;
 
-import java.io.IOException;
+import java.util.Set;
+
 
 public class WebSocketHandler {
     private AuthService authService;
@@ -57,7 +58,7 @@ public class WebSocketHandler {
 
     @OnWebSocketClose
     public void onClose(Session session){
-
+        session.close();
     }
 
     @OnWebSocketError
@@ -91,20 +92,80 @@ public class WebSocketHandler {
             color = "observer";
         }
         String messageSending = username + "joined as " + color;
-        Notification loadGame = new Notification(ServerMessage.ServerMessageType.LOAD_GAME, serializer.toJson(gameData));
-        session.getRemote().sendString(serializer.toJson(loadGame));
-        Notification notification = new Notification(ServerMessage.ServerMessageType.LOAD_GAME, messageSending);
+        LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
+        Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, messageSending);
         String messageSerialized = serializer.toJson(notification);
-        session.getRemote().sendString(messageSerialized);
+
+        Set<Session> sessions = webSocketSession.getSessionForGame(command.getGameID());
+        for (Session session1: sessions){
+            session1.getRemote().sendString(messageSerialized);
+            session1.getRemote().sendString(serializer.toJson(loadGame));
+        }
 
     }
-    public void makeMove(Session session, String username, UserGameCommand command){
+    public void makeMove(Session session, String username, UserGameCommand command) throws Exception {
+        Gson serializer = new Gson();
+        AuthData authData = authService.getAuthenByToken(command.getAuthToken());
+        if(authData == null){
+            System.out.println("user cannot connect to socket because their authdata is incorrect");
+            return;
+        }
+        GameData gameData = gameService.getGame(command.getGameID().toString());
+        if(gameData == null){
+            System.out.println("the game you are trying to make a move on does not exist");
+            return;
+        }
+        LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
+
+        Set<Session> sessions = webSocketSession.getSessionForGame(command.getGameID());
+        for (Session session1: sessions){
+            session1.getRemote().sendString(serializer.toJson(loadGame));
+        }
+    }
+    public void leaveGame(Session session, String username, UserGameCommand command) throws Exception{
+        Gson serializer = new Gson();
+        AuthData authData = authService.getAuthenByToken(command.getAuthToken());
+        if(authData == null){
+            System.out.println("user cannot connect leave the game because their authdata is incorrect");
+            return;
+        }
+        GameData gameData = gameService.getGame(command.getGameID().toString());
+        if(gameData == null){
+            System.out.println("the game you are trying to leave does not exist");
+        }
+        webSocketSession.removeSessionFromGame(command.getGameID(), session);
+        LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
+
+        String messageSending = username + " has left the game.";
+        Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, messageSending);
+        String messageSerialized = serializer.toJson(notification);
+
+        Set<Session> sessions = webSocketSession.getSessionForGame(command.getGameID());
+        for (Session session1: sessions){
+            session1.getRemote().sendString(messageSerialized);
+            session1.getRemote().sendString(serializer.toJson(loadGame));
+        }
 
     }
-    public void leaveGame(Session session, String username, UserGameCommand command){
+    public void resignGame(Session session, String username, UserGameCommand command) throws Exception{
+        Gson serializer = new Gson();
+        AuthData authData = authService.getAuthenByToken(command.getAuthToken());
+        if(authData == null){
+            System.out.println("user cannot resign because their authdata is incorrect");
+            return;
+        }
+        GameData gameData = gameService.getGame(command.getGameID().toString());
+        if(gameData == null){
+            System.out.println("the game you are trying to resign from does not exist");
+        }
+        String messageSending = username + " has resigned.";
+        Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, messageSending);
+        String messageSerialized = serializer.toJson(notification);
 
-    }
-    public void resignGame(Session session, String username, UserGameCommand command){
+        Set<Session> sessions = webSocketSession.getSessionForGame(command.getGameID());
+        for (Session session1: sessions){
+            session1.getRemote().sendString(messageSerialized);
+        }
 
     }
 }

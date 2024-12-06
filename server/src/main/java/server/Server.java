@@ -39,7 +39,6 @@ public class Server {
         authService = new AuthService();
         webSocketSession = new WebSocketSession();
         webSocketHandler = new WebSocketHandler(authService, gameService, webSocketSession);
-
     }
 
 
