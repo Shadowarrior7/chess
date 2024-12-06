@@ -97,7 +97,7 @@ public class ChessGame {
 
         if (teamColor != pieceColor) {
             System.out.print("that piece is not yours");
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Not your piece");
         }
         Collection<ChessMove> legalMoves = validMoves(move.getStartPosition());
         if (legalMoves.isEmpty()) {
@@ -126,13 +126,13 @@ public class ChessGame {
         } else {
             currentBoard.addPiece(move.getEndPosition(), piece);
         }
-//        if (teamColor.equals(TeamColor.WHITE)) {
-//            setTeamTurn(TeamColor.BLACK);
-//        } else {
-//            setTeamTurn(TeamColor.WHITE);
-//        }
+
         System.out.println("the turn was" + getTeamTurn());
-        changeTurn();
+        if (teamColor.equals(TeamColor.WHITE)) {
+            setTeamTurn(TeamColor.BLACK);
+        } else {
+            setTeamTurn(TeamColor.WHITE);
+        }
         System.out.println("the turn is now" + getTeamTurn());
     }
 

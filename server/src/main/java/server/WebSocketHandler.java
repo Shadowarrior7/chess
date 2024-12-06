@@ -115,9 +115,40 @@ public class WebSocketHandler {
             session.getRemote().sendString(serializer.toJson(error));
             return;
         }
-        gameData.game().makeMove(command.move());
+        if(isObserver(command.getGameID(), username)){
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error, you are an observer"));
+            session.getRemote().sendString(serializer.toJson(error));
+            return;
+        }
+        GameData newGame = null;
 
-        LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
+        String turn = gameData.game().getTeamTurn().toString().toLowerCase();
+        //System.out.println("the turn color is: " + turn);
+
+        String userColor = getUserColor(gameData, username);
+        if(!turn.equals(userColor)){
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error, not your piece"));
+            session.getRemote().sendString(serializer.toJson(error));
+            return;
+        }
+
+        try {
+            ChessGame game = new ChessGame();
+            game.setTeamTurn(gameData.game().getTeamTurn());
+            System.out.println("game turn: " + gameData.game().getTeamTurn());
+            //game.setBoard(gameData.game().copyBoard(gameData.game().getBoard()));
+            game.getBoard().setSquares(gameData.game().copyBoard(gameData.game().getBoard()));
+            newGame = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
+            newGame.game().makeMove(command.move());
+            System.out.println("new game turn: "+ newGame.game().getTeamTurn());
+        } catch(Exception e){
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error: " + e.getMessage()));
+            session.getRemote().sendString(serializer.toJson(error));
+            return;
+        }
+
+        gameService.updateGame(newGame, gameData);
+        LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, newGame.game());
         sendMessage(session, serializer.toJson(loadGame));
         broadcastMessage(command.getGameID(), serializer.toJson(loadGame), session);
 
@@ -157,9 +188,7 @@ public class WebSocketHandler {
         }
 
         gameService.updateGame(newGame, oldGame);
-        LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
-
-        sendMessage(session, serializer.toJson(loadGame));
+        webSocketSession.removeSessionFromGame(command.getGameID(), session);
 
         String messageSending = username + " has left the game.";
         Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, messageSending);
@@ -169,6 +198,7 @@ public class WebSocketHandler {
 
     }
     public void resignGame(Session session, String username, UserGameCommand command) throws Exception{
+        System.out.println("resigned game");
         Gson serializer = new Gson();
         AuthData authData = authService.getAuthenByToken(command.getAuthToken());
         if(authData == null){
@@ -179,12 +209,31 @@ public class WebSocketHandler {
         if(gameData == null){
             System.out.println("the game you are trying to resign from does not exist");
         }
-        gameData.game().setGameOver(true);
+        if(gameData.game().gameOver()){
+            System.out.println("game over");
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error, the game is over"));
+            session.getRemote().sendString(serializer.toJson(error));
+            return;
+        }
+        if(isObserver(command.getGameID(), username)){
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error, you are an observer"));
+            session.getRemote().sendString(serializer.toJson(error));
+            return;
+        }
+        GameData oldGame = gameData;
+        ChessGame game = new ChessGame();
+        game.setBoard(gameData.game().getBoard());
+        game.setTeamTurn(oldGame.game().getTeamTurn());
+        game.setGameOver(true);
+        GameData newGame = new GameData(command.getGameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
+        gameService.updateGame(newGame, oldGame);
+
         String messageSending = username + " has resigned.";
 
         Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, messageSending);
         String messageSerialized = serializer.toJson(notification);
 
+        sendMessage(session, messageSerialized);
         broadcastMessage(command.getGameID(), messageSerialized, session);
 
     }
@@ -200,5 +249,24 @@ public class WebSocketHandler {
                 session.getRemote().sendString(message);
             }
         }
+    }
+
+    public boolean isObserver(int gameID, String username) throws Exception{
+        GameData game = gameService.getGame(String.valueOf(gameID));
+        if(game.blackUsername().equals(username) || game.whiteUsername().equals(username)){
+            return false;
+        }
+        System.out.println("user is an observer");
+        return true;
+    }
+
+    public String getUserColor(GameData game, String username){
+        if(game.whiteUsername().equals(username)){
+            return "white";
+        }
+        if(game.blackUsername().equals(username)){
+            return "black";
+        }
+        return null;
     }
 }

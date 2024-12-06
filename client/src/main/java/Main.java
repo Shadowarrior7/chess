@@ -31,6 +31,7 @@ public class Main{
         loginFlag = false;
         joinFlag = false;
         serverFacade = new ServerFacade("http://localhost:8080");
+
         while (!exit) {
             if(!loginFlag) {
                 preLogin(args);

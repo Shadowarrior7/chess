@@ -29,4 +29,10 @@ public class WebSocketFascade {
             System.out.println(e.getMessage());
         }
     }
+
+    @OnMessage
+    private void onMessage(String message){
+        Gson seralizer = new Gson();
+        seralizer.fromJson(message, )
+    }
 }

@@ -71,6 +71,7 @@ public class SQLGameDao {
             preStatement.setString(1, oldGameJson);
             var result = preStatement.executeQuery();
             if (!result.next()){
+                System.out.println("old game does not exist");
                 statement= "INSERT INTO games (game) VALUES (?)";
                 var preparedStatement = conn.prepareStatement(statement);
                 preparedStatement.setString(1, updatedGameJson);
