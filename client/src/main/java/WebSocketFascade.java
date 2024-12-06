@@ -1,9 +1,11 @@
 
 import com.google.gson.Gson;
+import websocket.messages.ServerMessage;
 
 import javax.management.Notification;
 import javax.websocket.*;
 import java.net.URI;
+import org.eclipse.jetty.websocket.api.Session;
 
 public class WebSocketFascade {
     Session session;
@@ -30,9 +32,13 @@ public class WebSocketFascade {
         }
     }
 
+    private void sendMessage(){
+        session.get
+    }
     @OnMessage
     private void onMessage(String message){
         Gson seralizer = new Gson();
-        seralizer.fromJson(message, )
+        ServerMessage serverMessage = seralizer.fromJson(message, ServerMessage.class);
+        notificationHandler.notify(serverMessage);
     }
 }
