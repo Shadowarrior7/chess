@@ -50,6 +50,9 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         //make a db endpoint
         var serializer = new Gson();
+
+        Spark.webSocket("/ws", webSocketHandler);
+
         sparkDelete();
 
         sparkPost(serializer);
@@ -58,7 +61,7 @@ public class Server {
 
         sparkDelete(serializer);
 
-        Spark.webSocket("/ws", webSocketHandler);
+
 
         Spark.get("/game", (request, response) -> { //LIST GAMES
             response.type("application/json");
@@ -127,25 +130,6 @@ public class Server {
             }
         });
 
-        Spark.put("/makeMove", (request, response) -> {
-            response.type("application/json");
-            try {
-                makeMove makeMoveRequest = serializer.fromJson(request.body(), makeMove.class);
-                if(request.headers() == null){
-                    response.status(400);
-                    return "{ \"message\": \"Error: bad request\" }";
-                }
-                String token = request.headers("Authorization");
-                makeMove(token, makeMoveRequest.oldGame(), makeMoveRequest.newGame());
-                response.status(200);
-                return "{}";
-            }
-            catch (GenericException e) {
-                System.out.println("error when making the move");
-                response.status(e.code);
-                return serializer.toJson(Map.of("message", e.getMessage()));
-            }
-        });
 
 
 
@@ -348,21 +332,6 @@ public class Server {
                 throw new GenericException("Error: already taken", 403);
             }
         }
-    }
-
-    public void makeMove(String token, GameData oldGame, GameData newGame) throws DataAccessException {
-        new DatabaseManager();
-        AuthData authData = authService.getAuthenByToken(token);
-        System.out.println("got authdata");
-        if (authData == null){
-            throw new GenericException("Error: Unauthorized", 401);
-        }
-        if(oldGame == null || newGame == null){
-            throw new GenericException("Error: bad request", 400);
-        }
-        newGame.game().changeTurn();
-        gameService.updateGame(newGame, oldGame);
-        System.out.println("move has been made successfully");
     }
 
     private void extra(GameData game, AuthData authData) throws DataAccessException {

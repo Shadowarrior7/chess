@@ -14,11 +14,13 @@ public class ChessGame {
     private TeamColor turnColor;
     public int kingSafeMoves;
     public int kingSafeMoves2;
+    private boolean gameOver;
 
     public ChessGame() {
         currentBoard = new ChessBoard();
         currentBoard.resetBoard();
         turnColor = TeamColor.WHITE;
+        gameOver = false;
     }
 
     /**
@@ -83,6 +85,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        System.out.println("super turn is: " + getTeamTurn());
         ChessBoard board = getBoard();
         ChessPiece piece = board.getPiece(move.getStartPosition());
         if (piece == null) {
@@ -128,7 +131,9 @@ public class ChessGame {
 //        } else {
 //            setTeamTurn(TeamColor.WHITE);
 //        }
+        System.out.println("the turn was" + getTeamTurn());
         changeTurn();
+        System.out.println("the turn is now" + getTeamTurn());
     }
 
     public void boardChanger(ChessPosition positionToRemove) {
@@ -195,7 +200,7 @@ public class ChessGame {
             Collection<ChessMove> enemyMoves = enemyPiece.pieceMoves(board, enemy);
             for (ChessMove move : enemyMoves) {
                 if (move.getEndPosition().equals(myKingPos)) {
-                    System.out.println("in check");
+                    //System.out.println("in check");
                     return true;
                 }
             }
@@ -266,6 +271,7 @@ public class ChessGame {
                 Collection<ChessMove> enemyMoves = enemyPiece.pieceMoves(currentBoard, enemy);
                 for (ChessMove enemyMove : enemyMoves) {
                     if (extracted(kingMovesCopy, kingMove, enemyMove)) {
+                        gameOver = true;
                         return true;
                     }
                 }
@@ -274,7 +280,7 @@ public class ChessGame {
 
             }
         }
-        System.out.println(kingMovesCopy);
+        //System.out.println(kingMovesCopy);
         return false;
     }
 
@@ -291,7 +297,7 @@ public class ChessGame {
 
     private static boolean extract1(int kingSafeMoves) {
         if (kingSafeMoves == 0) {
-            System.out.println("in check mate");
+            //System.out.println("in check mate");
             return true;
         }
         return false;
@@ -321,6 +327,7 @@ public class ChessGame {
             for (ChessMove enemyMove : enemyMoves) {
                 for (ChessMove kingMove : kingMoves) {
                     if (extracted(enemyMove, kingMove)) {
+                        gameOver = true;
                         return true;
                     }
                 }
@@ -334,7 +341,7 @@ public class ChessGame {
             --kingSafeMoves;
             //System.out.println("king safe moves: "+ kingSafeMoves);
             if (kingSafeMoves == 0) {
-                System.out.println("in stale mate");
+                //System.out.println("in stale mate");
                 return true;
             }
         }
@@ -384,6 +391,14 @@ public class ChessGame {
         else {
             turnColor = TeamColor.BLACK;
         }
+    }
+
+    public boolean gameOver(){
+        return gameOver;
+    }
+
+    public void setGameOver(boolean state){
+        gameOver = state;
     }
 
     /**

@@ -220,6 +220,7 @@ public class Main{
                         if(game.blackUsername() != null && game.blackUsername().equals(whoAmI)){
                             ChessGame newGame = new ChessGame();
                             ChessBoard newBoard = new ChessBoard();
+                            newGame.setTeamTurn(game.game().getTeamTurn());
                             newBoard.setSquares(game.game().copyBoard(game.game().getBoard()));
                             newGame.setBoard(newBoard);
                             GameData updated = new GameData(game.gameID(), game.whiteUsername(), null, game.gameName(), newGame);
@@ -277,8 +278,10 @@ public class Main{
                     try {
                         ChessGame newGame = new ChessGame();
                         ChessBoard newBoard = new ChessBoard();
+                        newGame.setTeamTurn(myGame.game().getTeamTurn());
                         newBoard.setSquares(myGame.game().copyBoard(myGame.game().getBoard()));
                         newGame.setBoard(newBoard);
+                        newGame.setTeamTurn(myGame.game().getTeamTurn());
                         //newGame.changeTurn();
                         newGame.makeMove(new ChessMove(toMove, dest, promotionPiece(toMove, dest, myGame.game())));
                         GameData newGameData = new GameData(myGame.gameID(), myGame.whiteUsername(), myGame.blackUsername(), myGame.gameName(), newGame);

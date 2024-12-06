@@ -15,6 +15,12 @@ public class WebSocketSession {
 
     public void addSessionToGame(int gameID, Session session){
         Set<Session> sessions = sessionMap.get(gameID);
+        if(sessions == null){
+            Set<Session> sessions1 = new java.util.HashSet<>(Set.of());
+            sessions1.add(session);
+            sessionMap.put(gameID,sessions1);
+            return;
+        }
         sessions.add(session);
     }
     public void removeSessionFromGame(int gameID, Session session){
@@ -24,7 +30,11 @@ public class WebSocketSession {
         }
     }
     public Set<Session>getSessionForGame(int gameID){
-        return sessionMap.get(gameID);
+        Set<Session> sessions = sessionMap.get(gameID);
+        if(sessions == null){
+            return null;
+        }
+        return sessions;
     }
 
 }
