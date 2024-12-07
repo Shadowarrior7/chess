@@ -4,7 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
-import model.MakeMove;
+import model.MakeMoveModel;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import service.AuthService;
@@ -14,6 +14,7 @@ import websocket.messages.Error;
 import websocket.messages.LoadGame;
 import websocket.messages.Notification;
 import websocket.messages.ServerMessage;
+import websocket.commands.MakeMove;
 
 import java.util.Set;
 

@@ -56,7 +56,7 @@ public class ServerFacade {
 
     public void makeMove(String token, GameData oldGame, GameData newGame) throws Exception {
         var path = "/makeMove";
-        MakeMove move = new MakeMove(oldGame, newGame);
+        MakeMoveModel move = new MakeMoveModel(oldGame, newGame);
         this.makeRequest("PUT", path, move, null, token);
     }
     private  <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String token) throws Exception {
