@@ -1,6 +1,5 @@
 package server;
 
-import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
@@ -8,19 +7,11 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 import model.JoinGame;
-import model.makeMove;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.mindrot.jbcrypt.BCrypt;
 import service.AuthService;
 import service.UserService;
 import spark.*;
 import service.GameService;
-import websocket.commands.Connect;
-import websocket.commands.UserGameCommand;
-import org.eclipse.jetty.websocket.api.Session;
 
 
 import java.util.Collection;

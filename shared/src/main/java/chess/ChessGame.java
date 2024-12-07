@@ -384,14 +384,6 @@ public class ChessGame {
         currentBoard = board;
     }
 
-    public void changeTurn(){
-        if (turnColor.equals(TeamColor.BLACK)) {
-            turnColor = TeamColor.WHITE;
-        }
-        else {
-            turnColor = TeamColor.BLACK;
-        }
-    }
 
     public boolean gameOver(){
         return gameOver;

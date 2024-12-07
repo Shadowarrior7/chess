@@ -1,11 +1,9 @@
 import chess.*;
 import ui.*;
-
 import model.GameData;
 import model.JoinGame;
 import model.UserData;
 import server.ServerFacade;
-
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Scanner;
@@ -214,7 +212,6 @@ public class Main{
             System.out.println("(" + whoAmI + ") >>>> ");
             String input = scanner.nextLine().trim().toLowerCase();
             if (input.equals("leave")){
-                //color = null;
                 Collection<GameData> games = serverFacade.listGames(token);
                 for (GameData game : games){
                     if(game.gameID() == gameIDG){
@@ -284,7 +281,7 @@ public class Main{
                         newGame.setBoard(newBoard);
                         newGame.setTeamTurn(myGame.game().getTeamTurn());
                         //newGame.changeTurn();
-                        newGame.makeMove(new ChessMove(toMove, dest, promotionPiece(toMove, dest, myGame.game())));
+                        //newGame.makeMove(new ChessMove(toMove, dest, promotionPiece(toMove, dest, myGame.game())));
                         GameData newGameData = new GameData(myGame.gameID(), myGame.whiteUsername(), myGame.blackUsername(), myGame.gameName(), newGame);
                         serverFacade.makeMove(token, myGame, newGameData);
                     } catch (Exception e){
@@ -293,49 +290,6 @@ public class Main{
                     printBoard(gameIDG);
                 }
             }
-        }
-    }
-
-    public static ChessPiece.PieceType promotionPiece(ChessPosition toMove, ChessPosition dest, ChessGame game) throws Exception {
-        Scanner scanner = new Scanner(System.in);
-        if(!game.getBoard().getPiece(toMove).getPieceType().equals(ChessPiece.PieceType.PAWN)){
-            return null;
-        }
-        if (color.equals("WHITE") && dest.getRow() == 8){
-            System.out.println("you can promote this pawn, please give a piece type to promote to. ex( queen ): ");
-            String input = scanner.nextLine().trim().toLowerCase();
-            return parsePiece(input);
-        }
-        else if (color.equals("BLACK") && dest.getRow() == 1) {
-            System.out.println("you can promote this pawn, please give a piece type to promote to. ex( queen ): ");
-            String input = scanner.nextLine().trim().toLowerCase();
-            return parsePiece(input);
-        }
-        else {
-            return null;
-        }
-    }
-
-    public static ChessPiece.PieceType parsePiece(String input) throws Exception {
-        input = input.toLowerCase(Locale.ROOT);
-        if (input.equals("queen")){
-            return ChessPiece.PieceType.QUEEN;
-        }
-        else if (input.equals("rook")){
-            return ChessPiece.PieceType.ROOK;
-        }
-        else if (input.equals("bishop")){
-            return ChessPiece.PieceType.BISHOP;
-        }
-        else if (input.equals("knight")){
-            return ChessPiece.PieceType.KNIGHT;
-        }
-        else if (input.equals("pawn")){
-            return ChessPiece.PieceType.PAWN;
-        }
-        else {
-            //System.out.println("not a valid piece to promote too");
-            throw new Exception("not a valid piece to promote too");
         }
     }
 
@@ -349,10 +303,8 @@ public class Main{
         String row = position.substring(position.length()/2);
 
         if (Character.isLetter(column.charAt(0)) && Character.isDigit(row.charAt(0))) {
-
             char firstChar = Character.toLowerCase(column.charAt(0));
             int number = Integer.parseInt(row);
-
             if (firstChar >= 'a' && firstChar <= 'h' && number >= 1 && number <= 8){
                 finalColumn = firstChar - 'a' +1;
                 finalRow = number;
@@ -376,7 +328,6 @@ public class Main{
                     break;
                 }
             }
-
             assert theGame != null;
             ChessBoard theBoard = theGame.game().getBoard();
             String blue = EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_BOLD;
@@ -486,7 +437,6 @@ public class Main{
                 EscapeSequences.RESET_TEXT_COLOR);
     }
 
-
     public static String helper(int i, int j, ChessBoard board){
         ChessPiece[][] squares = board.getSquares();
         if (squares[i][j] == null){
@@ -551,7 +501,6 @@ public class Main{
     public static String findID(int id){
         String realID = "";
         try {
-
             Collection<GameData> games = serverFacade.listGames(token);
             int i = 0;
             for (GameData game : games) {
@@ -561,7 +510,6 @@ public class Main{
                 }
             }
             return realID;
-
         }catch(Exception e) {
             System.out.println("error in findID");
             System.out.println(e.getMessage());
