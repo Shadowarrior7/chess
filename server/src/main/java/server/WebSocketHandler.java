@@ -37,7 +37,8 @@ public class WebSocketHandler {
             UserGameCommand command = serializer.fromJson(msg, UserGameCommand.class);
             //validate auth first
             if(authService.getAuthenByToken(command.getAuthToken()) == null){
-                Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error, the users auth token is bad"));
+                Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String(
+                        "Error, the users auth token is bad"));
                 session.getRemote().sendString(serializer.toJson(error));
                 return;
             }
@@ -62,18 +63,21 @@ public class WebSocketHandler {
         String color;
         AuthData authData = authService.getAuthenByToken(command.getAuthToken());
         if(authData == null){
-            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error, the users auth token is bad"));
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String(
+                    "Error, the users auth token is bad"));
             session.getRemote().sendString(serializer.toJson(error));
             return;
         }
         GameData gameData = gameService.getGame(command.getGameID().toString());
         if(gameData == null){
-            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error, the game you are trying to join does not exist"));
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String(
+                    "Error, the game you are trying to join does not exist"));
             session.getRemote().sendString(serializer.toJson(error));
             return;
         }
         if(gameData.game().gameOver()){
-            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error, this game is over"));
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String(
+                    "Error, this game is over"));
             session.getRemote().sendString(serializer.toJson(error));
             return;
         }
@@ -99,24 +103,28 @@ public class WebSocketHandler {
         Gson serializer = new Gson();
         AuthData authData = authService.getAuthenByToken(command.getAuthToken());
         if(authData == null){
-            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error, the users auth token is bad"));
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String(
+                    "Error, the users auth token is bad"));
             session.getRemote().sendString(serializer.toJson(error));
             return;
         }
         GameData gameData = gameService.getGame(command.getGameID().toString());
         if(gameData == null){
-            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error, the game you are trying to join does not exist"));
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String(
+                    "Error, the game you are trying to join does not exist"));
             session.getRemote().sendString(serializer.toJson(error));
             return;
         }
         System.out.println("making a move");
         if(gameData.game().gameOver()){
-            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error, the game is over, please leave, you are getting annoying"));
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String(
+                    "Error, the game is over, please leave, you are getting annoying"));
             session.getRemote().sendString(serializer.toJson(error));
             return;
         }
         if(isObserver(command.getGameID(), username)){
-            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error, you are an observer"));
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String(
+                    "Error, you are an observer"));
             session.getRemote().sendString(serializer.toJson(error));
             return;
         }
@@ -138,11 +146,13 @@ public class WebSocketHandler {
             System.out.println("game turn: " + gameData.game().getTeamTurn());
             //game.setBoard(gameData.game().copyBoard(gameData.game().getBoard()));
             game.getBoard().setSquares(gameData.game().copyBoard(gameData.game().getBoard()));
-            newGame = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
+            newGame = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(),
+                    gameData.gameName(), game);
             newGame.game().makeMove(command.move());
             System.out.println("new game turn: "+ newGame.game().getTeamTurn());
         } catch(Exception e){
-            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error: " + e.getMessage()));
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String(
+                    "Error: " + e.getMessage()));
             session.getRemote().sendString(serializer.toJson(error));
             return;
         }
@@ -178,13 +188,15 @@ public class WebSocketHandler {
             ChessGame game = new ChessGame();
             game.setBoard(gameData.game().getBoard());
             game.setTeamTurn(oldGame.game().getTeamTurn());
-            newGame = new GameData(command.getGameID(), gameData.whiteUsername(), null, gameData.gameName(), game);
+            newGame = new GameData(command.getGameID(), gameData.whiteUsername(), null,
+                    gameData.gameName(), game);
         }
         else {
             ChessGame game = new ChessGame();
             game.setBoard(gameData.game().getBoard());
             game.setTeamTurn(oldGame.game().getTeamTurn());
-            newGame = new GameData(command.getGameID(), null, gameData.blackUsername(), gameData.gameName(), game);
+            newGame = new GameData(command.getGameID(), null, gameData.blackUsername(),
+                    gameData.gameName(), game);
         }
 
         gameService.updateGame(newGame, oldGame);
@@ -211,12 +223,14 @@ public class WebSocketHandler {
         }
         if(gameData.game().gameOver()){
             System.out.println("game over");
-            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error, the game is over"));
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String(
+                    "Error, the game is over"));
             session.getRemote().sendString(serializer.toJson(error));
             return;
         }
         if(isObserver(command.getGameID(), username)){
-            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String("Error, you are an observer"));
+            Error error = new Error(ServerMessage.ServerMessageType.ERROR, new String(
+                    "Error, you are an observer"));
             session.getRemote().sendString(serializer.toJson(error));
             return;
         }
@@ -225,7 +239,8 @@ public class WebSocketHandler {
         game.setBoard(gameData.game().getBoard());
         game.setTeamTurn(oldGame.game().getTeamTurn());
         game.setGameOver(true);
-        GameData newGame = new GameData(command.getGameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
+        GameData newGame = new GameData(command.getGameID(), gameData.whiteUsername(), gameData.blackUsername(),
+                gameData.gameName(), game);
         gameService.updateGame(newGame, oldGame);
 
         String messageSending = username + " has resigned.";
