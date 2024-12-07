@@ -214,21 +214,7 @@ public class Main{
             if (input.equals("leave")){
                 Collection<GameData> games = serverFacade.listGames(token);
                 for (GameData game : games){
-                    if(game.gameID() == gameIDG){
-                        if(game.blackUsername() != null && game.blackUsername().equals(whoAmI)){
-                            ChessGame newGame = new ChessGame();
-                            ChessBoard newBoard = new ChessBoard();
-                            newGame.setTeamTurn(game.game().getTeamTurn());
-                            newBoard.setSquares(game.game().copyBoard(game.game().getBoard()));
-                            newGame.setBoard(newBoard);
-                            GameData updated = new GameData(game.gameID(), game.whiteUsername(), null, game.gameName(), newGame);
-                            serverFacade.makeMove(token, game, updated);
-                        }
-                        if(game.whiteUsername() != null && game.whiteUsername().equals(whoAmI)){
-                            GameData updated = new GameData(game.gameID(), null, game.blackUsername(), game.gameName(), game.game());
-                            serverFacade.makeMove(token, game, updated);
-                        }
-                    }
+                    extracted(game);
                 }
                 joinFlag = false;
                 loop = false;
@@ -243,6 +229,24 @@ public class Main{
                 printBoard(gameIDG);
             }
             String[] splitString = input.toLowerCase(Locale.ROOT).split(" ");
+        }
+    }
+
+    private static void extracted(GameData game) throws Exception {
+        if(game.gameID() == gameIDG){
+            if(game.blackUsername() != null && game.blackUsername().equals(whoAmI)){
+                ChessGame newGame = new ChessGame();
+                ChessBoard newBoard = new ChessBoard();
+                newGame.setTeamTurn(game.game().getTeamTurn());
+                newBoard.setSquares(game.game().copyBoard(game.game().getBoard()));
+                newGame.setBoard(newBoard);
+                GameData updated = new GameData(game.gameID(), game.whiteUsername(), null, game.gameName(), newGame);
+                serverFacade.makeMove(token, game, updated);
+            }
+            if(game.whiteUsername() != null && game.whiteUsername().equals(whoAmI)){
+                GameData updated = new GameData(game.gameID(), null, game.blackUsername(), game.gameName(), game.game());
+                serverFacade.makeMove(token, game, updated);
+            }
         }
     }
 
