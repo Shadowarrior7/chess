@@ -39,7 +39,7 @@ public class WebSocketFascade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
-                    System.out.println("revieved a message");
+                    //System.out.println("revieved a message");
                    ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
                     handleMessage(notification, message);
                 }

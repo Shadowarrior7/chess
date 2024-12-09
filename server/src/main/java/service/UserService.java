@@ -27,7 +27,7 @@ public class UserService {
 
     public UserData getUser(String username) throws DataAccessException {
         var result = usersDao.getUser(username);
-        System.out.println(result);
+        //System.out.println(result);
         return result;
     }
 

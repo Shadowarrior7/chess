@@ -38,13 +38,18 @@ public class ChessPosition {
         //throw new RuntimeException("Not implemented");
     }
 
+
     @Override
     public String toString() {
-        return "ChessPosition{" +
-                "row=" + row +
-                ", col=" + col +
-                '}';
+        return"";
     }
+//    @Override
+//    public String toString() {
+//        return "ChessPosition{" +
+//                "row=" + row +
+//                ", col=" + col +
+//                '}';
+//    }
 
     @Override
     public boolean equals(Object o) {

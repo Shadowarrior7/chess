@@ -87,10 +87,10 @@ public class WebSocketHandler {
             session.getRemote().sendString(serializer.toJson(error));
             return;
         }
-        if(gameData.whiteUsername().equals(username)){
+        if(gameData.whiteUsername() !=null && gameData.whiteUsername().equals(username)){
             color = "white";
         }
-        else if (gameData.blackUsername().equals(username)){
+        else if (gameData.blackUsername() !=null && gameData.blackUsername().equals(username)){
             color = "black";
         }
         else{
@@ -189,24 +189,28 @@ public class WebSocketHandler {
 
         //finds game with username
         GameData oldGame = gameService.getGame(String.valueOf(command.getGameID()));
-        GameData newGame;
+        GameData newGame = null;
         if(oldGame.blackUsername() != null && oldGame.blackUsername().equals(username)){
             ChessGame game = new ChessGame();
             game.setBoard(gameData.game().getBoard());
             game.setTeamTurn(oldGame.game().getTeamTurn());
             newGame = new GameData(command.getGameID(), gameData.whiteUsername(), null,
                     gameData.gameName(), game);
+            gameService.updateGame(newGame, oldGame);
+            webSocketSession.removeSessionFromGame(command.getGameID(), session);
         }
-        else {
+        else if(oldGame.whiteUsername() != null && oldGame.whiteUsername().equals(username)){
             ChessGame game = new ChessGame();
             game.setBoard(gameData.game().getBoard());
             game.setTeamTurn(oldGame.game().getTeamTurn());
             newGame = new GameData(command.getGameID(), null, gameData.blackUsername(),
                     gameData.gameName(), game);
+            gameService.updateGame(newGame, oldGame);
+            webSocketSession.removeSessionFromGame(command.getGameID(), session);
         }
-
-        gameService.updateGame(newGame, oldGame);
-        webSocketSession.removeSessionFromGame(command.getGameID(), session);
+        else {
+            webSocketSession.removeSessionFromGame(command.getGameID(), session);
+        }
 
         String messageSending = username + " has left the game.";
         Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, messageSending);
@@ -292,10 +296,10 @@ public class WebSocketHandler {
     }
 
     public String getUserColor(GameData game, String username){
-        if(game.whiteUsername().equals(username)){
+        if(game.whiteUsername() !=null && game.whiteUsername().equals(username)){
             return "white";
         }
-        if(game.blackUsername().equals(username)){
+        if(game.blackUsername() !=null && game.blackUsername().equals(username)){
             return "black";
         }
         return null;

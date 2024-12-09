@@ -85,7 +85,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        System.out.println("super turn is: " + getTeamTurn());
+        //System.out.println("super turn is: " + getTeamTurn());
         ChessBoard board = getBoard();
         ChessPiece piece = board.getPiece(move.getStartPosition());
         if (piece == null) {
@@ -127,13 +127,13 @@ public class ChessGame {
             currentBoard.addPiece(move.getEndPosition(), piece);
         }
 
-        System.out.println("the turn was" + getTeamTurn());
+        //System.out.println("the turn was" + getTeamTurn());
         if (teamColor.equals(TeamColor.WHITE)) {
             setTeamTurn(TeamColor.BLACK);
         } else {
             setTeamTurn(TeamColor.WHITE);
         }
-        System.out.println("the turn is now" + getTeamTurn());
+        System.out.println("the turn is now " + getTeamTurn());
     }
 
     public void boardChanger(ChessPosition positionToRemove) {
@@ -242,7 +242,7 @@ public class ChessGame {
                 currentBoard.addPiece(move.getEndPosition(), friendlyPiece);
                 boardChanger(move.getStartPosition());
                 if (!isInCheck(teamColor)) {
-                    System.out.println(move);
+                    //System.out.println(move);
                     currentBoard.setSquares(copyBoard(newBoard));
                     return false;
                 }

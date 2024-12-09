@@ -21,7 +21,7 @@ public class Main{
     private static ChessGame game;
     private static WebSocketFascade webSocket;
     private static PrintBoard printBoard;
-
+    private static boolean observe;
 
     public static void main(String[] args) throws Exception {
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
@@ -31,6 +31,7 @@ public class Main{
         exit = false;
         loginFlag = false;
         joinFlag = false;
+        observe = false;
         serverFacade = new ServerFacade("http://localhost:8080");
 //        webSocket= new WebSocketFascade("http://localhost:8080");
 
@@ -42,6 +43,9 @@ public class Main{
                 return;
             }
             loggedIn(args);
+            if(observe){
+                observe();
+            }
             if (!joinFlag){
                 continue;
             }
@@ -113,7 +117,6 @@ public class Main{
                 System.out.println("join <id> [WHITE/BLACK]");
                 System.out.println("observe <id>");
                 System.out.println("logout");
-                System.out.println("quit");
                 System.out.println("help");
             }
             if(input.toLowerCase(Locale.ROOT).equals("list")){
@@ -192,7 +195,10 @@ public class Main{
                         throw new Exception("");
                     }
                     parseError = false;
-                    printBoard.printBoard(Integer.parseInt(realId));
+                    loop = false;
+                    observe = true;
+                    gameIDG = Integer.parseInt(realId);
+
                 }catch (Exception e){
                     if(parseError){
                         System.out.println("not a valid ID");
@@ -271,8 +277,8 @@ public class Main{
                         }
                     }
                     assert myGame != null;
-                    System.out.println("my color: "+ color);
-                    System.out.println("piece color: "+ myGame.game().getBoard().getPiece(toMove).getTeamColor());
+                    //System.out.println("my color: "+ color);
+                    //System.out.println("piece color: "+ myGame.game().getBoard().getPiece(toMove).getTeamColor());
                     if(!myGame.game().getBoard().getPiece(toMove).getTeamColor().toString().equals(color)){
                         System.out.println("the piece you are trying to move is not yours");
                         continue;
@@ -292,21 +298,7 @@ public class Main{
                     }
                 }
             }
-            if(splitString[0].equals("highlight")){
-                ChessPosition piecePos = convertPosition(splitString[1]);
-                if(splitString[1].length() != 2 || piecePos == null){
-                    System.out.println("invalid syntax for piece position");
-                    continue;
-                }
-                GameData myGame = null;
-                Collection<GameData> games = serverFacade.listGames(token);
-                for (GameData game : games) {
-                    if (game.gameID() == gameIDG){
-                        myGame = game;
-                    }
-                }
-                printBoard.printBoardWithHighlights(myGame.gameID(), piecePos);
-            }
+            highLight(splitString);
         }
     }
 
@@ -394,205 +386,67 @@ public class Main{
                 //serverFacade.makeMove(token, game, updated);
                 webSocket.leave(token, gameIDG);
             }
+            if(observe){
+                webSocket.leave(token, gameIDG);
+            }
         }
     }
 
-//    public static void printBoard(int gameID){
-//        try {
-//            Collection<GameData> games = serverFacade.listGames(token);
-//            GameData theGame = null;
-//            for (GameData game : games){
-//                if(game.gameID() == gameID){
-//                    theGame = game;
-//                    break;
-//                }
-//            }
-//            assert theGame != null;
-//            ChessBoard theBoard = theGame.game().getBoard();
-//            String blue = EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_BOLD;
-//            String black = EscapeSequences.SET_BG_COLOR_WHITE;
-//            String white = EscapeSequences.SET_BG_COLOR_DARK_GREEN;
-//
-//            if(color.equals("BLACK")) {
-//                System.out.println("\n" + EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK +
-//                        EscapeSequences.SET_TEXT_BOLD + "  h  g  f  e  d  c  b  a  " + EscapeSequences.RESET_BG_COLOR);
-//                blackBoard(blue, white, theBoard, black);
-//            }
-//            else {
-//                System.out.println("\n" + EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK +
-//                        EscapeSequences.SET_TEXT_BOLD + "  a  b  c  d  e  f  g  h  " + EscapeSequences.RESET_BG_COLOR);
-//                System.out.println(blue + "8" + black + helper(8, 1, theBoard) + white + helper(8, 2, theBoard) +
-//                        black + helper(8, 3, theBoard) + white + helper(8, 4, theBoard) + black +
-//                        helper(8, 5, theBoard) + white + helper(8, 6, theBoard) + black +
-//                        helper(8, 7, theBoard) + white + helper(8, 8, theBoard) + blue +
-//                        "8" + EscapeSequences.RESET_BG_COLOR);
-//                System.out.println(blue + "7" + white + helper(7, 1, theBoard) + black + helper(7, 2, theBoard) +
-//                        white + helper(7, 3, theBoard) + black + helper(7, 4, theBoard) + white +
-//                        helper(7, 5, theBoard) + black + helper(7, 6, theBoard) + white +
-//                        helper(7, 7, theBoard) + black + helper(7, 8, theBoard) + blue +
-//                        "7" + EscapeSequences.RESET_BG_COLOR);
-//                System.out.println(blue + "6" + black + helper(6, 1, theBoard) + white + helper(6, 2, theBoard) +
-//                        black + helper(6, 3, theBoard) + white + helper(6, 4, theBoard) + black +
-//                        helper(6, 5, theBoard) + white + helper(6, 6, theBoard) + black +
-//                        helper(6, 7, theBoard) + white + helper(6, 8, theBoard) + blue +
-//                        "6" + EscapeSequences.RESET_BG_COLOR);
-//                System.out.println(blue + "5" + white + helper(5, 1, theBoard) + black + helper(5, 2, theBoard) +
-//                        white + helper(5, 3, theBoard) + black + helper(5, 4, theBoard) + white +
-//                        helper(5, 5, theBoard) + black + helper(5, 6, theBoard) + white +
-//                        helper(5, 7, theBoard) + black + helper(5, 8, theBoard) + blue +
-//                        "5" + EscapeSequences.RESET_BG_COLOR);
-//                System.out.println(blue + "4" + black + helper(4, 1, theBoard) + white + helper(4, 2, theBoard) +
-//                        black + helper(4, 3, theBoard) + white + helper(4, 4, theBoard) + black +
-//                        helper(4, 5, theBoard) + white + helper(4, 6, theBoard) + black +
-//                        helper(4, 7, theBoard) + white + helper(4, 8, theBoard) + blue +
-//                        "4" + EscapeSequences.RESET_BG_COLOR);
-//                System.out.println(blue + "3" + white + helper(3, 1, theBoard) + black + helper(3, 2, theBoard) +
-//                        white + helper(3, 3, theBoard) + black + helper(3, 4, theBoard) + white +
-//                        helper(3, 5, theBoard) + black + helper(3, 6, theBoard) + white +
-//                        helper(3, 7, theBoard) + black + helper(3, 8, theBoard) + blue +
-//                        "3" + EscapeSequences.RESET_BG_COLOR);
-//                System.out.println(blue + "2" + black + helper(2, 1, theBoard) + white + helper(2, 2, theBoard) +
-//                        black + helper(2, 3, theBoard) + white + helper(2, 4, theBoard) + black +
-//                        helper(2, 5, theBoard) + white + helper(2, 6, theBoard) + black +
-//                        helper(2, 7, theBoard) + white + helper(2, 8, theBoard) + blue +
-//                        "2" + EscapeSequences.RESET_BG_COLOR);
-//                System.out.println(blue + "1" + white + helper(1, 1, theBoard) + black + helper(1, 2, theBoard) +
-//                        white + helper(1, 3, theBoard) + black + helper(1, 4, theBoard) + white +
-//                        helper(1, 5, theBoard) + black + helper(1, 6, theBoard) + white +
-//                        helper(1, 7, theBoard) + black + helper(1, 8, theBoard) + blue +
-//                        "1" + EscapeSequences.RESET_BG_COLOR);
-//                System.out.println(EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK +
-//                        EscapeSequences.SET_TEXT_BOLD + "  a  b  c  d  e  f  g  h  " + EscapeSequences.RESET_BG_COLOR +
-//                        EscapeSequences.RESET_TEXT_COLOR);
-//            }
-//        }catch (Exception e){
-//            System.out.println(e.getMessage());
-//        }
-//    }
-//
-//    private static void blackBoard(String blue, String white, ChessBoard theBoard, String black) {
-//        System.out.println(blue + "1" + white + helper(1, 8, theBoard) + black + helper(1, 7, theBoard) +
-//                white + helper(1, 6, theBoard) + black + helper(1, 5, theBoard) + white +
-//                helper(1, 4, theBoard) + black + helper(1, 3, theBoard) + white +
-//                helper(1, 2, theBoard) + black + helper(1, 1, theBoard) + blue +
-//                "1" + EscapeSequences.RESET_BG_COLOR);
-//        System.out.println(blue + "2" + black + helper(2, 8, theBoard) + white + helper(2, 7, theBoard) +
-//                black + helper(2, 6, theBoard) + white + helper(2, 5, theBoard) + black +
-//                helper(2, 4, theBoard) + white + helper(2, 3, theBoard) + black +
-//                helper(2, 2, theBoard) + white + helper(2, 1, theBoard) + blue +
-//                "2" + EscapeSequences.RESET_BG_COLOR);
-//        System.out.println(blue + "3" + white + helper(3, 8, theBoard) + black + helper(3, 7, theBoard) +
-//                white + helper(3, 6, theBoard) + black + helper(3, 5, theBoard) + white +
-//                helper(3, 4, theBoard) + black + helper(3, 3, theBoard) + white +
-//                helper(3, 2, theBoard) + black + helper(3, 1, theBoard) + blue +
-//                "3" + EscapeSequences.RESET_BG_COLOR);
-//        System.out.println(blue + "4" + black + helper(4, 8, theBoard) + white + helper(4, 7, theBoard) +
-//                black + helper(4, 6, theBoard) + white + helper(4, 5, theBoard) + black +
-//                helper(4, 4, theBoard) + white + helper(4, 3, theBoard) + black +
-//                helper(4, 2, theBoard) + white + helper(4, 1, theBoard) + blue +
-//                "4" + EscapeSequences.RESET_BG_COLOR);
-//        System.out.println(blue + "5" + white + helper(5, 8, theBoard) + black + helper(5, 7, theBoard) +
-//                white + helper(5, 6, theBoard) + black + helper(5, 5, theBoard) + white +
-//                helper(5, 4, theBoard) + black + helper(5, 3, theBoard) + white +
-//                helper(5, 2, theBoard) + black + helper(5, 1, theBoard) + blue +
-//                "5" + EscapeSequences.RESET_BG_COLOR);
-//        System.out.println(blue + "6" + black + helper(6, 8, theBoard) + white + helper(6, 7, theBoard) +
-//                black + helper(6, 6, theBoard) + white + helper(6, 5, theBoard) + black +
-//                helper(6, 4, theBoard) + white + helper(6, 3, theBoard) + black +
-//                helper(6, 2, theBoard) + white + helper(6, 1, theBoard) + blue +
-//                "6" + EscapeSequences.RESET_BG_COLOR);
-//        System.out.println(blue + "7" + white + helper(7, 8, theBoard) + black + helper(7, 7, theBoard) +
-//                white + helper(7, 6, theBoard) + black + helper(7, 5, theBoard) + white +
-//                helper(7, 4, theBoard) + black + helper(7, 3, theBoard) + white +
-//                helper(7, 2, theBoard) + black + helper(7, 1, theBoard) + blue +
-//                "7" + EscapeSequences.RESET_BG_COLOR);
-//        System.out.println(blue + "8" + black + helper(8, 8, theBoard) + white + helper(8, 7, theBoard) +
-//                black + helper(8, 6, theBoard) + white + helper(8, 5, theBoard) + black +
-//                helper(8, 4, theBoard) + white + helper(8, 3, theBoard) + black +
-//                helper(8, 2, theBoard) + white + helper(8, 1, theBoard) + blue +
-//                "8" + EscapeSequences.RESET_BG_COLOR);
-//        System.out.println(EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_COLOR_BLACK +
-//                EscapeSequences.SET_TEXT_BOLD + "  h  g  f  e  d  c  b  a  " + EscapeSequences.RESET_BG_COLOR +
-//                EscapeSequences.RESET_TEXT_COLOR);
-//    }
-//
-//    public static String helper(int i, int j, ChessBoard board){
-//        ChessPiece[][] squares = board.getSquares();
-//        if (squares[i][j] == null){
-//            return "   ";
-//        }
-//
-//        ChessPiece piece = squares[i][j];
-//        if (piece.getTeamColor().equals(ChessGame.TeamColor.WHITE)){
-//            return helperWhite(piece);
-//        }
-//        if (piece.getTeamColor().equals(ChessGame.TeamColor.BLACK)){
-//            return helperBlack(piece);
-//        }
-//        return "   ";
-//    }
-//
-//    public static String helperBlack(ChessPiece piece){
-//        ChessPiece.PieceType type = piece.getPieceType();
-//        if (type.equals(ChessPiece.PieceType.KING)){
-//            return EscapeSequences.BLACK_KING;
-//        }
-//        if (type.equals(ChessPiece.PieceType.QUEEN)){
-//            return EscapeSequences.BLACK_QUEEN;
-//        }
-//        if (type.equals(ChessPiece.PieceType.BISHOP)){
-//            return EscapeSequences.BLACK_BISHOP;
-//        }
-//        if (type.equals(ChessPiece.PieceType.KNIGHT)){
-//            return EscapeSequences.BLACK_KNIGHT;
-//        }
-//        if (type.equals(ChessPiece.PieceType.ROOK)){
-//            return EscapeSequences.BLACK_ROOK;
-//        }
-//        if (type.equals(ChessPiece.PieceType.PAWN)){
-//            return EscapeSequences.BLACK_PAWN;
-//        }
-//        return "   ";
-//    }
-//    public static String helperWhite(ChessPiece piece){
-//        ChessPiece.PieceType type = piece.getPieceType();
-//        if (type.equals(ChessPiece.PieceType.KING)){
-//            return EscapeSequences.WHITE_KING;
-//        }
-//        if (type.equals(ChessPiece.PieceType.QUEEN)){
-//            return EscapeSequences.WHITE_QUEEN;
-//        }
-//        if (type.equals(ChessPiece.PieceType.BISHOP)){
-//            return EscapeSequences.WHITE_BISHOP;
-//        }
-//        if (type.equals(ChessPiece.PieceType.KNIGHT)){
-//            return EscapeSequences.WHITE_KNIGHT;
-//        }
-//        if (type.equals(ChessPiece.PieceType.ROOK)){
-//            return EscapeSequences.WHITE_ROOK;
-//        }
-//        if (type.equals(ChessPiece.PieceType.PAWN)){
-//            return EscapeSequences.WHITE_PAWN;
-//        }
-//        return "   ";
-//    }
-//
-//    public static String findID(int id){
-//        String realID = "";
-//        try {
-//            Collection<GameData> games = serverFacade.listGames(token);
-//            int i = 0;
-//            for (GameData game : games) {
-//                ++i;
-//                if(i == id){
-//                    realID = String.valueOf(game.gameID());
-//                }
-//            }
-//            return realID;
-//        }catch(Exception e) {
-//            System.out.println("error in findID");
-//            System.out.println(e.getMessage());
-//        }
-//        return realID;
-//    }
+    public static void observe() throws Exception {
+        Collection<GameData> games = serverFacade.listGames(token);
+        GameData myGame = null;
+        for (GameData game : games){
+            if(game.gameID() == gameIDG){
+                myGame = game;
+            }
+        }
+        webSocket = new WebSocketFascade("ws://localhost:8080/ws", printBoard);
+        webSocket.connect(token, gameIDG);
+        webSocket.setUserName(whoAmI);
+
+        System.out.println("You are observing a game");
+        Scanner scanner = new Scanner(System.in);
+        boolean loop = true;
+        while (loop){
+            System.out.println("(" + whoAmI + ") >>>> ");
+            String input = scanner.nextLine().trim().toLowerCase();
+
+            if(input.equals("help")){
+            System.out.println("help");
+            System.out.println("highlight <Piece position>");
+            System.out.println("leave");
+            }
+            if (input.equals("leave")){
+                Collection<GameData> games1 = serverFacade.listGames(token);
+                for (GameData game : games1){
+                    extracted(game);
+                }
+                observe = false;
+                loop = false;
+            }
+            String[] splitString = input.toLowerCase(Locale.ROOT).split(" ");
+            highLight(splitString);
+        }
+
+
+
+    }
+
+    public static void highLight(String[] splitString) throws Exception {
+        if(splitString[0].equals("highlight")){
+            ChessPosition piecePos = convertPosition(splitString[1]);
+            if(splitString[1].length() != 2 || piecePos == null){
+                System.out.println("invalid syntax for piece position");
+                return;
+            }
+            GameData myGame = null;
+            Collection<GameData> games = serverFacade.listGames(token);
+            for (GameData game : games) {
+                if (game.gameID() == gameIDG){
+                    myGame = game;
+                }
+            }
+            printBoard.printBoardWithHighlights(myGame.gameID(), piecePos);
+        }
+    }
 }

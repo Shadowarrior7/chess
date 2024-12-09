@@ -104,7 +104,7 @@ public class ChessPiece {
                     //check to see if there is a piece there
                     ChessPosition newPosition = new ChessPosition(currentRow, currentColumn);
                     //ChessPosition check = new ChessPosition(currentRow-1, currentColumn-1);
-                    System.out.println(newPosition);
+                    //System.out.println(newPosition);
                     if (board.getPiece(newPosition) != null) {
                         extract1(board, myPosition, newPosition, myColor, moves);
                         break;
@@ -247,7 +247,7 @@ public class ChessPiece {
         //checks if you can take the piece
         if (pieceColor.equals(myColor)) {
             //System.out.println("same color");
-            System.out.println(board.getPiece(newPosition).getPieceType());
+            //System.out.println(board.getPiece(newPosition).getPieceType());
             return;
         } else {
             //System.out.println("different color");
