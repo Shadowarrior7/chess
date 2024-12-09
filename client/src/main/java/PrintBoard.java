@@ -60,10 +60,10 @@ public class PrintBoard {
                     int column = color.equals("BLACK") ? 9 - j : j;
 
                     String squareColor = isWhiteSquare ? white : black;
-                    row.append(squareColor).append(helper(i, column, theBoard));
+                    extracted(row.append(squareColor), helper(i, column, theBoard));
                 }
 
-                row.append(blue).append(" ").append(i).append(EscapeSequences.RESET_BG_COLOR);
+                extracted(row.append(blue).append(" ").append(i), EscapeSequences.RESET_BG_COLOR);
                 System.out.println(row);
             }
             if (color.equals("BLACK")) {
@@ -76,6 +76,10 @@ public class PrintBoard {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private static void extracted(StringBuilder row, String i) {
+        row.append(i);
     }
 
     public static void printBoardWithHighlights(int gameID, ChessPosition pos) {
@@ -141,10 +145,10 @@ public class PrintBoard {
                     } else {
                         squareColor = isWhiteSquare ? white : black;
                     }
-                    row.append(squareColor).append(helper(i, column, theBoard));
+                    extracted(row.append(squareColor), helper(i, column, theBoard));
                 }
 
-                row.append(blue).append(" ").append(i).append(EscapeSequences.RESET_BG_COLOR);
+                extracted(row.append(blue).append(" ").append(i), EscapeSequences.RESET_BG_COLOR);
                 System.out.println(row);
             }
             if (color.equals("BLACK")) {

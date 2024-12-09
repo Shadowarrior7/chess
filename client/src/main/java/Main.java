@@ -138,7 +138,6 @@ public class Main{
                     System.out.println(e.getMessage());
                 }
             }
-
             String[] splitString = input.toLowerCase(Locale.ROOT).split(" ");
             if (splitString[0].equals("create")){
                 try{
@@ -148,7 +147,6 @@ public class Main{
                     System.out.println(e.getMessage());
                 }
             }
-
             if (splitString[0].equals("join")){
                 boolean parseError = true;
                 boolean hmm;
@@ -167,13 +165,11 @@ public class Main{
                         throw new Exception("");
                     }
                     JoinGame jGame = new JoinGame(splitString[2].toUpperCase(Locale.ROOT), readID);
-
                     serverFacade.joinGame(token, jGame);
                     color = splitString[2].toUpperCase();
                     gameIDG = Integer.parseInt(readID);
                     joinFlag = true;
                     loop = false;
-
                 } catch (Exception e) {
                     if(parseError){
                         System.out.println("not a valid ID");
@@ -183,11 +179,9 @@ public class Main{
                     }
                 }
             }
-
             if (splitString[0].equals("observe")){
                 boolean parseError = true;
                 printBoard = new PrintBoard(args, serverFacade, token, color);
-
                 try {
                     int i = Integer.parseInt(splitString[1]);
                     String realId = printBoard.findID(i);
@@ -198,7 +192,6 @@ public class Main{
                     loop = false;
                     observe = true;
                     gameIDG = Integer.parseInt(realId);
-
                 }catch (Exception e){
                     if(parseError){
                         System.out.println("not a valid ID");
@@ -288,8 +281,10 @@ public class Main{
                         ChessGame newGame = myGame.game();
                         move = new ChessMove(toMove, dest, promotionPiece(toMove, dest, myGame.game()));
                         newGame.makeMove(move);
-                        GameData oldGameData = new GameData(myGame.gameID(), myGame.whiteUsername(), myGame.blackUsername(), myGame.gameName(), oldGame);
-                        GameData newGameData = new GameData(myGame.gameID(), myGame.whiteUsername(), myGame.blackUsername(), myGame.gameName(), newGame);
+                        GameData oldGameData = new GameData(myGame.gameID(), myGame.whiteUsername(),
+                                myGame.blackUsername(), myGame.gameName(), oldGame);
+                        GameData newGameData = new GameData(myGame.gameID(), myGame.whiteUsername(),
+                                myGame.blackUsername(), myGame.gameName(), newGame);
                         //serverFacade.makeMove(token, oldGameData, newGameData);
                         webSocket.makeMove(gameIDG, token, move);
                         //printBoard.printBoard(gameIDG);
@@ -302,7 +297,8 @@ public class Main{
         }
     }
 
-    public static ChessPiece.PieceType promotionPiece(ChessPosition toMove, ChessPosition dest, ChessGame game) throws Exception {
+    public static ChessPiece.PieceType promotionPiece(ChessPosition toMove, ChessPosition dest, ChessGame game)
+            throws Exception {
         Scanner scanner = new Scanner(System.in);
         if(!game.getBoard().getPiece(toMove).getPieceType().equals(ChessPiece.PieceType.PAWN)){
             return null;
@@ -377,12 +373,14 @@ public class Main{
                 newGame.setTeamTurn(game.game().getTeamTurn());
                 newBoard.setSquares(game.game().copyBoard(game.game().getBoard()));
                 newGame.setBoard(newBoard);
-                GameData updated = new GameData(game.gameID(), game.whiteUsername(), null, game.gameName(), newGame);
+                GameData updated = new GameData(game.gameID(), game.whiteUsername(), null,
+                        game.gameName(), newGame);
                 //serverFacade.makeMove(token, game, updated);
                 webSocket.leave(token, gameIDG);
             }
             if(game.whiteUsername() != null && game.whiteUsername().equals(whoAmI)){
-                GameData updated = new GameData(game.gameID(), null, game.blackUsername(), game.gameName(), game.game());
+                GameData updated = new GameData(game.gameID(), null, game.blackUsername(),
+                        game.gameName(), game.game());
                 //serverFacade.makeMove(token, game, updated);
                 webSocket.leave(token, gameIDG);
             }
