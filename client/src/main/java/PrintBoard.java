@@ -54,14 +54,7 @@ public class PrintBoard {
             for (int i = startRank; i != endRank + rankStep; i += rankStep) {
                 StringBuilder row = new StringBuilder(blue + i + " ");
 
-                for (int j = 1; j <= 8; j++) {
-                    boolean isWhiteSquare = (i + j) % 2 == 0;
-
-                    int column = color.equals("BLACK") ? 9 - j : j;
-
-                    String squareColor = isWhiteSquare ? white : black;
-                    extracted(row.append(squareColor), helper(i, column, theBoard));
-                }
+                extracted(i, white, black, row, theBoard);
 
                 extracted(row.append(blue).append(" ").append(i), EscapeSequences.RESET_BG_COLOR);
                 System.out.println(row);
@@ -75,6 +68,17 @@ public class PrintBoard {
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    private static void extracted(int i, String white, String black, StringBuilder row, ChessBoard theBoard) {
+        for (int j = 1; j <= 8; j++) {
+            boolean isWhiteSquare = (i + j) % 2 == 0;
+
+            int column = color.equals("BLACK") ? 9 - j : j;
+
+            String squareColor = isWhiteSquare ? white : black;
+            extracted(row.append(squareColor), helper(i, column, theBoard));
         }
     }
 
