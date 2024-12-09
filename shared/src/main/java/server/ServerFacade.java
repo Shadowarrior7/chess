@@ -54,11 +54,11 @@ public class ServerFacade {
         this.makeRequest("PUT", path, game, null, token);
     }
 
-    public void makeMove(String token, GameData oldGame, GameData newGame) throws Exception {
-        var path = "/makeMove";
-        MakeMoveModel move = new MakeMoveModel(oldGame, newGame);
-        this.makeRequest("PUT", path, move, null, token);
-    }
+//    public void makeMove(String token, GameData oldGame, GameData newGame) throws Exception {
+//        var path = "/makeMove";
+//        MakeMoveModel move = new MakeMoveModel(oldGame, newGame);
+//        this.makeRequest("PUT", path, move, null, token);
+//    }
     private  <T> T makeRequest(String method, String path, Object request, Class<T> responseClass, String token) throws Exception {
         try{
             URL url = (new URI(serverUrl + path)).toURL();

@@ -16,6 +16,7 @@ import websocket.messages.Notification;
 import websocket.messages.ServerMessage;
 import websocket.commands.MakeMove;
 
+import javax.websocket.OnMessage;
 import java.util.Set;
 
 @WebSocket
@@ -28,6 +29,11 @@ public class WebSocketHandler {
         authService = authService2;
         gameService = gameService2;
 
+    }
+
+    @OnWebSocketConnect
+    public void onConnect(Session session){
+        webSocketSession.addSessionToGame(0,session);
     }
 
     @OnWebSocketMessage
@@ -91,7 +97,7 @@ public class WebSocketHandler {
             color = "observer";
         }
         String messageSending = username + "joined as " + color;
-        LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
+        LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData);
         Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, messageSending);
         String messageSerialized = serializer.toJson(notification);
 
@@ -158,7 +164,7 @@ public class WebSocketHandler {
         }
 
         gameService.updateGame(newGame, gameData);
-        LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, newGame.game());
+        LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, newGame);
         sendMessage(session, serializer.toJson(loadGame));
         broadcastMessage(command.getGameID(), serializer.toJson(loadGame), session);
 
@@ -184,7 +190,7 @@ public class WebSocketHandler {
         //finds game with username
         GameData oldGame = gameService.getGame(String.valueOf(command.getGameID()));
         GameData newGame;
-        if(oldGame.blackUsername().equals(username)){
+        if(oldGame.blackUsername() != null && oldGame.blackUsername().equals(username)){
             ChessGame game = new ChessGame();
             game.setBoard(gameData.game().getBoard());
             game.setTeamTurn(oldGame.game().getTeamTurn());
@@ -268,6 +274,16 @@ public class WebSocketHandler {
 
     public boolean isObserver(int gameID, String username) throws Exception{
         GameData game = gameService.getGame(String.valueOf(gameID));
+        if (game.blackUsername() == null){
+            if (game.whiteUsername().equals(username)){
+                return false;
+            }
+        }
+        if (game.whiteUsername() == null){
+            if (game.blackUsername().equals(username)){
+                return false;
+            }
+        }
         if(game.blackUsername().equals(username) || game.whiteUsername().equals(username)){
             return false;
         }
