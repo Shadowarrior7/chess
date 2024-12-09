@@ -129,13 +129,7 @@ public class PrintBoard {
                     boolean isPiecePosition = (pos.getRow() == i && pos.getColumn() == column);
 
                     boolean isValidMove = false;
-                    for (ChessMove move : validMoves) {
-                        ChessPosition targetPosition = move.getEndPosition();
-                        if (targetPosition.getRow() == i && targetPosition.getColumn() == column) {
-                            isValidMove = true;
-                            break;
-                        }
-                    }
+                    isValidMove = isIsValidMove(validMoves, i, column, isValidMove);
 
                     String squareColor;
                     if (isPiecePosition) {
@@ -163,10 +157,16 @@ public class PrintBoard {
         }
     }
 
-
-
-
-
+    private static boolean isIsValidMove(Collection<ChessMove> validMoves, int i, int column, boolean isValidMove) {
+        for (ChessMove move : validMoves) {
+            ChessPosition targetPosition = move.getEndPosition();
+            if (targetPosition.getRow() == i && targetPosition.getColumn() == column) {
+                isValidMove = true;
+                break;
+            }
+        }
+        return isValidMove;
+    }
 
 
     public static String helper(int i, int j, ChessBoard board){

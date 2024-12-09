@@ -264,11 +264,7 @@ public class Main{
                 else {
                     GameData myGame = null;
                     Collection<GameData> games = serverFacade.listGames(token);
-                    for (GameData game : games) {
-                        if (game.gameID() == gameIDG){
-                            myGame = game;
-                        }
-                    }
+                    myGame = getGameData(games, myGame);
                     assert myGame != null;
                     //System.out.println("my color: "+ color);
                     //System.out.println("piece color: "+ myGame.game().getBoard().getPiece(toMove).getTeamColor());
@@ -295,6 +291,15 @@ public class Main{
             }
             highLight(splitString);
         }
+    }
+
+    private static GameData getGameData(Collection<GameData> games, GameData myGame) {
+        for (GameData game : games) {
+            if (game.gameID() == gameIDG){
+                myGame = game;
+            }
+        }
+        return myGame;
     }
 
     public static ChessPiece.PieceType promotionPiece(ChessPosition toMove, ChessPosition dest, ChessGame game)
@@ -393,11 +398,7 @@ public class Main{
     public static void observe() throws Exception {
         Collection<GameData> games = serverFacade.listGames(token);
         GameData myGame = null;
-        for (GameData game : games){
-            if(game.gameID() == gameIDG){
-                myGame = game;
-            }
-        }
+        getGameData(games, myGame);
         webSocket = new WebSocketFascade("ws://localhost:8080/ws", printBoard);
         webSocket.connect(token, gameIDG);
         webSocket.setUserName(whoAmI);
@@ -439,11 +440,7 @@ public class Main{
             }
             GameData myGame = null;
             Collection<GameData> games = serverFacade.listGames(token);
-            for (GameData game : games) {
-                if (game.gameID() == gameIDG){
-                    myGame = game;
-                }
-            }
+            myGame = getGameData(games, myGame);
             printBoard.printBoardWithHighlights(myGame.gameID(), piecePos);
         }
     }
