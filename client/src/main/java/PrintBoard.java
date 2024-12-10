@@ -36,8 +36,6 @@ public class PrintBoard {
             String blue = EscapeSequences.SET_BG_COLOR_BLUE + EscapeSequences.SET_TEXT_BOLD;
             String black = EscapeSequences.SET_BG_COLOR_WHITE;
             String white = EscapeSequences.SET_BG_COLOR_DARK_GREEN;
-
-            // Print file (column) headers
             if (color.equals("BLACK")) {
                 System.out.println("\n" + blue + EscapeSequences.SET_TEXT_COLOR_BLACK +
                         "   h  g  f  e  d  c  b  a  " + EscapeSequences.RESET_BG_COLOR);
@@ -46,17 +44,22 @@ public class PrintBoard {
                         "   a  b  c  d  e  f  g  h  " + EscapeSequences.RESET_BG_COLOR);
             }
 
-            // Control rank order based on player color
             int startRank = color.equals("BLACK") ? 1 : 8;
             int endRank = color.equals("BLACK") ? 8 : 1;
             int rankStep = color.equals("BLACK") ? 1 : -1;
 
             for (int i = startRank; i != endRank + rankStep; i += rankStep) {
                 StringBuilder row = new StringBuilder(blue + i + " ");
-
-                extracted(i, white, black, row, theBoard);
-
-                extracted(row.append(blue).append(" ").append(i), EscapeSequences.RESET_BG_COLOR);
+                for (int j = 1; j <= 8; j++) {
+                    boolean isWhiteSquare = (i % 2 == j % 2);
+                    if (color.equals("BLACK")) {
+                        isWhiteSquare = !isWhiteSquare;
+                    }
+                    String squareColor = isWhiteSquare ? white : black;
+                    int column = color.equals("BLACK") ? 9 - j : j;
+                    row.append(squareColor).append(helper(i, column, theBoard));
+                }
+                row.append(blue).append(" ").append(i).append(EscapeSequences.RESET_BG_COLOR); // Print rank number at the end
                 System.out.println(row);
             }
             if (color.equals("BLACK")) {
@@ -70,6 +73,8 @@ public class PrintBoard {
             System.out.println(e.getMessage());
         }
     }
+
+
 
     private static void extracted(int i, String white, String black, StringBuilder row, ChessBoard theBoard) {
         for (int j = 1; j <= 8; j++) {
@@ -88,7 +93,6 @@ public class PrintBoard {
 
     public static void printBoardWithHighlights(int gameID, ChessPosition pos) {
         try {
-            // 1. Get the game data for the specified gameID
             Collection<GameData> games = serverFacade.listGames(token);
             GameData theGame = null;
             for (GameData game : games) {
@@ -99,7 +103,6 @@ public class PrintBoard {
             }
             assert theGame != null;
 
-
             Collection<ChessMove> validMoves = theGame.game().validMoves(pos);
 
             ChessBoard theBoard = theGame.game().getBoard();
@@ -108,7 +111,6 @@ public class PrintBoard {
             String white = EscapeSequences.SET_BG_COLOR_DARK_GREEN;
             String highlight = EscapeSequences.SET_BG_COLOR_GREEN;
             String pieceHighlight = EscapeSequences.SET_BG_COLOR_RED;
-
 
             if (color.equals("BLACK")) {
                 System.out.println("\n" + blue + EscapeSequences.SET_TEXT_COLOR_BLACK +
@@ -124,17 +126,22 @@ public class PrintBoard {
 
             for (int i = startRank; i != endRank + rankStep; i += rankStep) {
                 StringBuilder row = new StringBuilder(blue + i + " ");
-
                 for (int j = 1; j <= 8; j++) {
-                    boolean isWhiteSquare = (i + j) % 2 == 0;
-
-                    int column = color.equals("BLACK") ? 9 - j : j;//flips board
-
+                    boolean isWhiteSquare = (i % 2 == j % 2);
+                    if (color.equals("BLACK")) {
+                        isWhiteSquare = !isWhiteSquare;
+                    }
+                    int column = color.equals("BLACK") ? 9 - j : j;
                     boolean isPiecePosition = (pos.getRow() == i && pos.getColumn() == column);
 
                     boolean isValidMove = false;
-                    isValidMove = isIsValidMove(validMoves, i, column, isValidMove);
-
+                    for (ChessMove move : validMoves) {
+                        ChessPosition targetPosition = move.getEndPosition();
+                        if (targetPosition.getRow() == i && targetPosition.getColumn() == column) {
+                            isValidMove = true;
+                            break;
+                        }
+                    }
                     String squareColor;
                     if (isPiecePosition) {
                         squareColor = pieceHighlight;
@@ -143,10 +150,9 @@ public class PrintBoard {
                     } else {
                         squareColor = isWhiteSquare ? white : black;
                     }
-                    extracted(row.append(squareColor), helper(i, column, theBoard));
+                    row.append(squareColor).append(helper(i, column, theBoard));
                 }
-
-                extracted(row.append(blue).append(" ").append(i), EscapeSequences.RESET_BG_COLOR);
+                row.append(blue).append(" ").append(i).append(EscapeSequences.RESET_BG_COLOR);
                 System.out.println(row);
             }
             if (color.equals("BLACK")) {
@@ -159,17 +165,6 @@ public class PrintBoard {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    private static boolean isIsValidMove(Collection<ChessMove> validMoves, int i, int column, boolean isValidMove) {
-        for (ChessMove move : validMoves) {
-            ChessPosition targetPosition = move.getEndPosition();
-            if (targetPosition.getRow() == i && targetPosition.getColumn() == column) {
-                isValidMove = true;
-                break;
-            }
-        }
-        return isValidMove;
     }
 
 

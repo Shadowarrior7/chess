@@ -251,7 +251,13 @@ public class ClientMain {
             }
             if(input.equals("resign")){
                 try {
-                    webSocket.resign(token, gameIDG);
+                    System.out.println("are you sure you want to resign? yes or no?");
+                    String input2 = scanner.nextLine().trim().toLowerCase();
+                    if(input2.equals("yes")){
+                        webSocket.resign(token, gameIDG);
+                    } else if (input2.equals("no")){
+                        continue;
+                    }
                 } catch (Exception e){
                     System.out.println(e.getMessage());
                 }
@@ -417,7 +423,11 @@ public class ClientMain {
             if(input.equals("help")){
             System.out.println("help");
             System.out.println("highlight <Piece position>");
+            System.out.println("redraw");
             System.out.println("leave");
+            }
+            if(input.equals("redraw")){
+                printBoard.printBoard(gameIDG);
             }
             if (input.equals("leave")){
                 Collection<GameData> games1 = serverFacade.listGames(token);

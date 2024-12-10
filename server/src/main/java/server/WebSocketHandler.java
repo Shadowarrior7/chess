@@ -1,6 +1,8 @@
 package server;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
@@ -163,43 +165,61 @@ public class WebSocketHandler {
             return;
         }
         if (newGame.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
-            Notification notfiy = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, "black is in check mate");
+            Notification notfiy = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, getUsername(gameData, "black") + " is in check mate");
             broadcastMessage(command.getGameID(), serializer.toJson(notfiy), session);
             sendMessage(session, serializer.toJson(notfiy));
             newGame.game().setGameOver(true);
         } else if (newGame.game().isInCheck(ChessGame.TeamColor.BLACK)){
-            Notification notfiy = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, "black is in check");
+            Notification notfiy = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, getUsername(gameData, "black") + " is in check");
             broadcastMessage(command.getGameID(), serializer.toJson(notfiy), session);
             sendMessage(session, serializer.toJson(notfiy));
         }
         if (newGame.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
-            Notification notfiy = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, "white is in check mate");
+            Notification notfiy = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, getUsername(gameData, "white") + " is in check mate");
             broadcastMessage(command.getGameID(), serializer.toJson(notfiy), session);
             sendMessage(session, serializer.toJson(notfiy));
             newGame.game().setGameOver(true);
         }else if (newGame.game().isInCheck(ChessGame.TeamColor.WHITE)){
-            Notification notfiy = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, "white is in check");
+            Notification notfiy = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, getUsername(gameData, "white") + " is in check");
             sendMessage(session, serializer.toJson(notfiy));
             broadcastMessage(command.getGameID(), serializer.toJson(notfiy), session);
 
         }
-
-
-        
-
         gameService.updateGame(newGame, gameData);
         LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, newGame);
         sendMessage(session, serializer.toJson(loadGame));
         broadcastMessage(command.getGameID(), serializer.toJson(loadGame), session);
 
-        String msg = username + " made a move";
+        String msg = username + " made a move: " + convertToChessNotation(command.move().getStartPosition())
+                + " to " + convertToChessNotation(command.move().getEndPosition());
         Notification move = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, msg);
         broadcastMessage(command.getGameID(), serializer.toJson(move), session);
         System.out.println("move made");
-
-
-
     }
+
+    public static String getUsername(GameData gameData, String color){
+        String white = gameData.whiteUsername();
+        String black = gameData.blackUsername();
+        color = color.toLowerCase();
+        if (color.equals("white")){
+            return white;
+        }
+        if (color.equals("black")){
+            return black;
+        }
+        return null;
+    }
+
+    public static String convertToChessNotation(ChessPosition position) {
+        int row = position.getRow();
+        int column = position.getColumn();
+        if (row < 1 || row > 8 || column < 1 || column > 8) {
+            return null;
+        }
+        char columnLetter = (char) ('a' + (column - 1));
+        return String.valueOf(columnLetter) + row;
+    }
+
     public void leaveGame(Session session, String username, UserGameCommand command) throws Exception{
         Gson serializer = new Gson();
         AuthData authData = authService.getAuthenByToken(command.getAuthToken());
