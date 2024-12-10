@@ -57,7 +57,7 @@ public class WebSocketFascade extends Endpoint {
         this.userName = userName;
     }
 
-    private void sendMessage(String msg) throws Exception {
+    public void sendMessage(String msg) throws Exception {
         session.getBasicRemote().sendText(msg);
     }
 

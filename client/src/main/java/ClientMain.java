@@ -1,15 +1,18 @@
 import chess.*;
-import ui.*;
+import com.google.gson.Gson;
 import model.GameData;
 import model.JoinGame;
 import model.UserData;
 import server.ServerFacade;
+import websocket.messages.Notification;
+import websocket.messages.ServerMessage;
+
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Scanner;
 
 
-public class Main{
+public class ClientMain {
     public static String whoAmI;
     public static ServerFacade serverFacade;
     private static boolean loginFlag;
@@ -283,6 +286,7 @@ public class Main{
                                 myGame.blackUsername(), myGame.gameName(), newGame);
                         //serverFacade.makeMove(token, oldGameData, newGameData);
                         webSocket.makeMove(gameIDG, token, move);
+
                         //printBoard.printBoard(gameIDG);
                     } catch (Exception e){
                         System.out.println(e.getMessage());

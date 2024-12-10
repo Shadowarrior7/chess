@@ -96,7 +96,7 @@ public class WebSocketHandler {
         else{
             color = "observer";
         }
-        String messageSending = username + "joined as " + color;
+        String messageSending = username + " joined as " + color;
         LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData);
         Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, messageSending);
         String messageSerialized = serializer.toJson(notification);
@@ -163,6 +163,30 @@ public class WebSocketHandler {
             return;
         }
 
+        if (newGame.game().isInCheck(ChessGame.TeamColor.WHITE)){
+            Notification notfiy = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, "white is in check");
+            broadcastMessage(command.getGameID(), serializer.toJson(notfiy), session);
+            sendMessage(session, serializer.toJson(notfiy));
+        }
+        if (newGame.game().isInCheck(ChessGame.TeamColor.BLACK)){
+            Notification notfiy = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, "black is in check");
+            broadcastMessage(command.getGameID(), serializer.toJson(notfiy), session);
+            sendMessage(session, serializer.toJson(notfiy));
+        }
+
+        if (newGame.game().isInCheckmate(ChessGame.TeamColor.BLACK)){
+            Notification notfiy = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, "black is in check mate");
+            broadcastMessage(command.getGameID(), serializer.toJson(notfiy), session);
+            sendMessage(session, serializer.toJson(notfiy));
+            newGame.game().setGameOver(true);
+        }
+        if (newGame.game().isInCheckmate(ChessGame.TeamColor.WHITE)){
+            Notification notfiy = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, "white is in check mate");
+            broadcastMessage(command.getGameID(), serializer.toJson(notfiy), session);
+            sendMessage(session, serializer.toJson(notfiy));
+            newGame.game().setGameOver(true);
+        }
+
         gameService.updateGame(newGame, gameData);
         LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, newGame);
         sendMessage(session, serializer.toJson(loadGame));
@@ -172,6 +196,8 @@ public class WebSocketHandler {
         Notification move = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, msg);
         broadcastMessage(command.getGameID(), serializer.toJson(move), session);
         System.out.println("move made");
+
+
 
     }
     public void leaveGame(Session session, String username, UserGameCommand command) throws Exception{
